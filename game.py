@@ -21,7 +21,7 @@ class Game:
 
 
     def generateBoard(self):
-        auxBoard = []
+        '''auxBoard = []
         possibleColors= [COLOR_RED_TILE] * 6 + [COLOR_BLUE_TILE] * 6 + [COLOR_YELLOW_TILE] * 6 + [COLOR_NEUTRAL_TILE] * 3
         for tile in range(self.dimention * self.dimention):
             if tile in self.boardCorners:
@@ -31,12 +31,14 @@ class Game:
                 auxBoard += [Tile(selectedColor)]
                 possibleColors.remove(selectedColor)
         return [auxBoard[i * self.dimention:(i + 1) * self.dimention] for i in range((len(auxBoard) + self.dimention - 1) // self.dimention)]
-
-        #for row in board:
-         #   print("-----")
-          #  for col in row:
-           #     print(col)
-            #print("-----")
+    '''
+        return [
+            [Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE)],
+            [Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE)],
+            [Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE),Tile(COLOR_NEUTRAL_TILE)],
+            [Tile(COLOR_BLUE_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE),Tile(COLOR_RED_TILE)],
+            [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
+        ]
     def drawPlayerTurn(self):
         self.currPlayer.draw(self.screen, self.font)
 
