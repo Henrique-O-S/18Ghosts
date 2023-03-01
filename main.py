@@ -6,16 +6,23 @@ import pygame
 def main():
 
     pygame.init()
-    screen = pygame.display.set_mode((800, 1000))
-    done = False
-    game = Game(screen, Player("um", PlayerType.PLAYER), Player("dois", PlayerType.BOT))
+    timer = pygame.time.Clock()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption('18 Ghosts')
+    my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
-    while not done:
+    running = True
+    game = Game(screen, my_font, Player("um", PlayerType.PLAYER), Player("dois", PlayerType.BOT))
+
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
-        game.currPlayer.draw(screen)
+                running = False
+        screen.fill(COLOR_BACKGROUND)
+        game.draw()
+
         pygame.display.flip()
+        timer.tick(fps)
 
 if __name__ == "__main__":
     main()
