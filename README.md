@@ -8,9 +8,7 @@
 
 ## Game Rules
 
-- 2 players
-- 9 ghosts (3 red, 3 blue, 3 yellow) for each player
-- first to have one ghost of each colour removed from the board wins
+Rules explained in detail here.
 
 ---
 
