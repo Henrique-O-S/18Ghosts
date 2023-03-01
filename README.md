@@ -2,13 +2,13 @@
 
 ## Game Board
 
-![img](images/18ghosts.png)
+![img](docs/18ghosts.png)
 
 ---
 
 ## Game Rules
 
-Rules explained in detail here.
+[Rules explained in detail here](docs/18GHOSTS_EN_r1.pdf)
 
 ---
 
