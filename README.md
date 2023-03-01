@@ -1,4 +1,4 @@
-# 18Ghosts-IA
+# 18 Ghosts
 
 ## Game Board
 
