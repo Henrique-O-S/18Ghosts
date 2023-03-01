@@ -14,7 +14,7 @@
 
 ---
 
-Project done by (group 19):
+**Project done by (group 19):**
 - Diogo Filipe Ferreira da Silva
 - Henrique Oliveira Silva
 - Tiago Nunes Moreira Branquinho
