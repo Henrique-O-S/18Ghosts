@@ -2,6 +2,12 @@
 
 ---
 
+## Game Board
+
+![img](images/18ghosts.png)
+
+---
+
 ## Game Rules
 
 - 2 players
