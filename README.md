@@ -1,7 +1,5 @@
 # 18Ghosts-IA
 
----
-
 ## Game Board
 
 ![img](images/18ghosts.png)
@@ -16,7 +14,9 @@
 
 ---
 
-Group 19:
+Project done by (group 19):
 - Diogo Filipe Ferreira da Silva
 - Henrique Oliveira Silva
 - Tiago Nunes Moreira Branquinho
+
+---
