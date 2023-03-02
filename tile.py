@@ -4,6 +4,7 @@ from position import Position
 class Tile:
     def __init__(self, color):
         self.color = color
+        self.full = False
     def __str__(self):
         return str(self.color) + " tile"
 

@@ -1,6 +1,5 @@
 from enum import Enum
 
-import pygame
 
 
 class Color(Enum):
@@ -39,3 +38,9 @@ TILEHEIGHT = 120
 
 COLOR_FONT = (0,0,0)
 COLOR_FONT_BACKGROUND = (255,255,255)
+
+def clickSquareColision(clickPosition, elPosition, width, height):
+    return clickPosition.x > elPosition.x and clickPosition.x < elPosition.x + width and clickPosition.y > elPosition.y and clickPosition.y < elPosition.y + height
+
+def compareGhostTileColor(ghost, tile):
+    return (ghost.color == COLOR_BLUE_GHOST and tile.color == COLOR_BLUE_TILE) or (ghost.color == COLOR_YELLOW_GHOST and tile.color == COLOR_YELLOW_TILE) or (ghost.color == COLOR_RED_GHOST and tile.color == COLOR_RED_TILE)

@@ -14,15 +14,21 @@ def main():
     my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
     running = True
-    game = Game(screen, my_font, Player("Player 1", PlayerType.PLAYER), Player("Player 2", PlayerType.BOT))
+    player1 = Player("Player 1", PlayerType.PLAYER)
+    player2 = Player("Player 2", PlayerType.BOT)
+
+    game = Game(screen, my_font, player1, player2)
+
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                game.chooseGhostTile(Position(x,y))
         screen.fill(COLOR_BACKGROUND)
         game.draw()
-        Ghost(COLOR_RED_GHOST, Player("Player 1", PlayerType.PLAYER), Position(10,10)).draw(screen)
 
         pygame.display.flip()
         timer.tick(fps)

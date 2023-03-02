@@ -7,6 +7,7 @@ from ghost import Ghost
 from position import Position
 from tile import Tile
 from player import Player
+import time
 
 
 class Game:
@@ -20,6 +21,7 @@ class Game:
         self.board = self.generateBoard()
         self.currPlayer = player1
         self.font = font
+        self.ghostsChosen = False
 
 
     def generateBoard(self):
@@ -32,21 +34,38 @@ class Game:
         ]
         x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 2
         y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 2
+
+        self.boardCoords = Position(x,y)
+
+
         for row in range(self.dimention):
             for col in range(self.dimention):
                 board[row][col].setPos(Position(x + TILEWIDTH * col, y + TILEHEIGHT * row))
         return board
     def generateGhosts(self):
         ghosts = []
-        i = 1
-        j = 1
+
         possibleColors= [COLOR_RED_GHOST] * 3 + [COLOR_BLUE_GHOST] * 3 + [COLOR_YELLOW_GHOST] * 3
         for player in [self.player1, self.player2]:
             for color in possibleColors:
-                ghosts.append(Ghost(color, player, Position(i,j)))
-                i += 20
-                j += 30
+                ghosts.append(Ghost(color, player))
+
         return ghosts
+
+    def chooseGhostTile(self, click : Position):
+        if click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT:
+            indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
+            indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
+            tile = self.board[indexY][indexX]
+            if not tile.full:
+                for ghost in self.ghosts:
+                    if not ghost.chosen:
+                        if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
+                            tile.full = True
+                            ghost.setIndexandPos(Position(indexY, indexX), Position(indexX * TILEWIDTH + self.boardCoords.x, indexY * TILEHEIGHT + self.boardCoords.y))
+                            self.switchPlayers()
+
+                            return
 
     def drawGhosts(self):
         for ghost in self.ghosts:
@@ -64,3 +83,10 @@ class Game:
         self.drawPlayerTurn()
         self.drawBoard()
         self.drawGhosts()
+
+    def switchPlayers(self):
+        if self.currPlayer == self.player1:
+            self.currPlayer = self.player2
+        else:
+            self.currPlayer = self.player1
+

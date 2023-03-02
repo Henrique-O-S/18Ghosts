@@ -1,20 +1,27 @@
 import pygame
 from defines import *
 from position import Position
+from tile import Tile
 
 
 class Ghost:
-    def __init__(self, color, player, position : Position):
+    def __init__(self, color, player):
         self.color = color
         self.player = player
         self.image = self.loadImage()
-        self.position = position
+        self.chosen = False
 
     def __str__(self):
         return "player = " + str(self.player) + " | color = " + str(self.color)
 
     def draw(self, screen):
-        screen.blit(self.image, (self.position.x, self.position.y))
+        if self.chosen:
+            screen.blit(self.image, (self.position.x, self.position.y))
+
+    def setIndexandPos(self, index : Position, position : Position):
+        self.index = index
+        self.position = position
+        self.chosen = True
 
     def loadImage(self):
         if self.color == COLOR_RED_GHOST:
