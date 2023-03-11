@@ -73,7 +73,11 @@ class Game:
             ghost.draw(self.screen)
 
     def drawPlayerTurn(self):
-        self.currPlayer.draw(self.screen, self.font)
+        picking = ""
+        if self.state == GameState.PICKING:
+            picking = " to pick a spot"
+        self.currPlayer.draw(self.screen, self.font, picking)
+
 
     def drawBoard(self):
         for row in range(self.dimention):
