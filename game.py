@@ -21,7 +21,7 @@ class Game:
         self.board = self.generateBoard()
         self.currPlayer = player1
         self.font = font
-        self.ghostsChosen = False
+        self.state = GameState.PICKING
 
 
     def generateBoard(self):
@@ -64,6 +64,7 @@ class Game:
                             tile.full = True
                             ghost.setIndexandPos(Position(indexY, indexX), Position(indexX * TILEWIDTH + self.boardCoords.x, indexY * TILEHEIGHT + self.boardCoords.y))
                             self.switchPlayers()
+                            self.updateState()
 
                             return
 
@@ -90,3 +91,9 @@ class Game:
         else:
             self.currPlayer = self.player1
 
+    def updateState(self):
+        if self.state == GameState.PICKING:
+            for ghost in self.ghosts:
+                if not ghost.chosen:
+                    return
+            self.state = GameState.PLAYING

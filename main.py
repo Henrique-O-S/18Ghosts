@@ -22,8 +22,9 @@ def main():
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or game.state == GameState.PLAYING:
                 running = False
+                print("Ghosts are picked - good ending")
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 game.chooseGhostTile(Position(x,y))

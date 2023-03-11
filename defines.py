@@ -7,13 +7,15 @@ class Color(Enum):
     BLUE = 2
     YELLOW = 3
 
-Color = Enum('Color', ['RED', 'BLUE', 'YELLOW'])
 
 class PlayerType(Enum):
     PLAYER = 1
     BOT = 2
 
-PlayerType = Enum('PlayerType', ['PLAYER', 'BOT'])
+class GameState(Enum):
+    PICKING = 1
+    PLAYING = 2
+    OVER = 3
 
 # COLOR
 COLOR_RED_TILE = (251, 79, 79)
