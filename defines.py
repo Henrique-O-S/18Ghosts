@@ -47,4 +47,4 @@ def clickSquareColision(clickPosition, elPosition, width, height):
     return clickPosition.x > elPosition.x and clickPosition.x < elPosition.x + width and clickPosition.y > elPosition.y and clickPosition.y < elPosition.y + height
 
 def compareGhostTileColor(ghost, tile):
-    return (ghost.color == COLOR_BLUE_GHOST and tile.color == COLOR_BLUE_TILE) or (ghost.color == COLOR_YELLOW_GHOST and tile.color == COLOR_YELLOW_TILE) or (ghost.color == COLOR_RED_GHOST and tile.color == COLOR_RED_TILE)
+    return (ghost.color == "blue" and tile.color == COLOR_BLUE_TILE) or (ghost.color == "yellow" and tile.color == COLOR_YELLOW_TILE) or (ghost.color == "red" and tile.color == COLOR_RED_TILE)
