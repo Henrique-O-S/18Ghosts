@@ -4,6 +4,7 @@ from pygame import SurfaceType, Surface
 
 from defines import *
 from ghost import Ghost
+from portal import Portal
 from position import Position
 from tile import Tile
 from player import Player
@@ -26,11 +27,11 @@ class Game:
 
     def generateBoard(self):
         board =  [
-            [Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE)],
+            [Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_RED_TILE, Portal("red")), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE)],
             [Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE)],
-            [Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE),Tile(COLOR_NEUTRAL_TILE)],
+            [Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE, Portal("yellow"))],
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE),Tile(COLOR_RED_TILE)],
-            [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
+            [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE, Portal("blue")), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
         ]
         x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 2
         y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 2
@@ -45,7 +46,7 @@ class Game:
     def generateGhosts(self):
         ghosts = []
 
-        possibleColors= [COLOR_RED_GHOST] * 3 + [COLOR_BLUE_GHOST] * 3 + [COLOR_YELLOW_GHOST] * 3
+        possibleColors= ["red"] * 3 + ["blue"] * 3 + ["yellow"] * 3
         for player in [self.player1, self.player2]:
             for color in possibleColors:
                 ghosts.append(Ghost(color, player))

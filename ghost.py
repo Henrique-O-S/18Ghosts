@@ -24,10 +24,4 @@ class Ghost:
         self.chosen = True
 
     def loadImage(self):
-        if self.color == COLOR_RED_GHOST:
-            color = "red"
-        elif self.color == COLOR_BLUE_GHOST:
-            color = "blue"
-        else:
-            color = "yellow"
-        return pygame.transform.scale(pygame.image.load('images/' + color + '_ghost_' + self.player.name[-1] + '.png').convert_alpha(), (90, 90))
+        return pygame.transform.scale(pygame.image.load('images/' + self.color + '_ghost_' + self.player.name[-1] + '.png').convert_alpha(), (90, 90))
