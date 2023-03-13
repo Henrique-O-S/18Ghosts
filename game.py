@@ -150,8 +150,13 @@ class Game:
         if self.clickInsideBoard(click):
             ghostIndexes = self.coordsToIndexBoard(click)
             for ghost in self.ghosts:
-                if ghost.index == ghostIndexes:
+                if self.currGhost and self.currGhost.index == ghostIndexes:
+                    self.currGhost = 0
+                    return
+                elif ghost.index == ghostIndexes and ghost.player == self.currPlayer and not self.currGhost:
                     self.currGhost = ghost
+                    return
+
 
 
 

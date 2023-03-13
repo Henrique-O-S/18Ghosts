@@ -11,6 +11,8 @@ class Ghost:
         self.image = self.loadImage()
         self.chosen = False
 
+    def __eq__(self, other):
+        return self.color == other.color and self.player == other.player
     def __str__(self):
         return "player = " + str(self.player) + " | color = " + str(self.color)
 
