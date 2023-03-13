@@ -140,21 +140,22 @@ class Game:
     def clickInsideBoard(self, click : Position):
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
 
-    def moveCurrGhost(self, click : Position):
-        if self.currGhost and self.clickInsideBoard(click):
-            ghostIndexes = self.coordsToIndexBoard(click)
-            if [ghostIndexes.y, ghostIndexes.x] in self.possibleMoves(self.currGhost):
-                print("ya bro pode ir para ai")
+    def moveCurrGhost(self, index : Position):
+        if [index.y, index.x] in self.possibleMoves(self.currGhost):
+            print("ya bro pode ir para ai")
 
     def selectGhost(self, click : Position):
         if self.clickInsideBoard(click):
             ghostIndexes = self.coordsToIndexBoard(click)
+            if self.currGhost and self.currGhost.index == ghostIndexes: #clicked on selected ghost --> stop selecting it
+                self.currGhost = 0
+                return
             for ghost in self.ghosts:
-                if self.currGhost and self.currGhost.index == ghostIndexes:
-                    self.currGhost = 0
-                    return
-                elif ghost.index == ghostIndexes and ghost.player == self.currPlayer and not self.currGhost:
-                    self.currGhost = ghost
+                if ghost.index == ghostIndexes: # ghost that player clicked
+                    if self.currGhost: # if another one is selected
+                        self.moveCurrGhost(ghost.index)
+                    elif ghost.player == self.currPlayer:
+                        self.currGhost = ghost
                     return
 
 
