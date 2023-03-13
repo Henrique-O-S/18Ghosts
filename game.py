@@ -21,6 +21,7 @@ class Game:
         self.boardCorners = [0, self.dimention - 1, self.dimention * self.dimention - self.dimention, self.dimention * self.dimention - 1]
         self.board = self.generateBoard()
         self.currPlayer = player1
+        self.currGhost : Ghost | int = 0
         self.font = font
         self.state = GameState.PICKING
 
@@ -102,3 +103,28 @@ class Game:
                 if not ghost.chosen:
                     return
             self.state = GameState.PLAYING
+
+    def possibleMoves(self, ghost : Ghost):
+        row, col = ghost.position.x, ghost.position.y
+        board_copy = [row[:] for row in self.board]
+        possible_moves = []
+        for drow, dcol in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            new_row, new_col = row + drow, col + dcol
+            if 0 <= new_row < self.dimention and 0 <= new_col < self.dimention:
+                new_tile = board_copy[new_row][new_col]
+                if not new_tile.full and not new_tile.portal:
+                    board_copy[row][col].full = False
+                    board_copy[new_row][new_col].full = True
+                    possible_moves.append((new_row, new_col))
+        print("Possible moves:")
+        for move in possible_moves:
+            print("  ghost at index ({},{}) to index ({},{})".format(row, col, move[0], move[1]))
+        return possible_moves
+        '''
+        print("Updated Board:")
+        for row in board_copy:
+            print([str(tile) for tile in row])
+        print("\n")
+        return board_copy
+        '''
+
