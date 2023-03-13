@@ -24,10 +24,16 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                print("Ghosts are picked - good ending")
-            elif game.state == GameState.PICKING and event.type == pygame.MOUSEBUTTONDOWN: #choose tile for ghost in initial phase
+            elif event.type == pygame.KEYDOWN: # CLOSE WITH ESC KEY
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN: #choose tile for ghost in initial phase
+                print(game.state)
                 x, y = pygame.mouse.get_pos()
-                game.chooseGhostTile(Position(x,y))
+                if game.state == GameState.PICKING:
+                    game.chooseGhostTile(Position(x,y))
+                elif game.state == GameState.PLAYING:    #play
+                    game.selectGhost(Position(x,y))
         screen.fill(COLOR_BACKGROUND)
         game.draw()
 

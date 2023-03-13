@@ -25,7 +25,6 @@ class Game:
         self.font = font
         self.state = GameState.PICKING
 
-
     def generateBoard(self):
         board =  [
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_RED_TILE, Portal("red")), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE)],
@@ -55,16 +54,17 @@ class Game:
         return ghosts
 
     def chooseGhostTile(self, click : Position):
-        if click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT:
-            indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
-            indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
-            tile = self.board[indexY][indexX]
-            if not tile.full:
+        if self.clickInsideBoard(click):
+            indexes = self.coordsToIndexBoard(click)
+            rowIndex = indexes.x
+            colIndex = indexes.y
+            tile = self.board[rowIndex][colIndex]
+            if not (tile.full or tile.portal):
                 for ghost in self.ghosts:
                     if not ghost.chosen:
                         if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
                             tile.full = True
-                            ghost.setIndexandPos(Position(indexY, indexX), Position(indexX * TILEWIDTH + self.boardCoords.x, indexY * TILEHEIGHT + self.boardCoords.y))
+                            ghost.setIndexandPos(Position(rowIndex, colIndex), Position(colIndex * TILEWIDTH + self.boardCoords.x, rowIndex * TILEHEIGHT + self.boardCoords.y))
                             self.switchPlayers()
                             self.updateState()
 
@@ -84,7 +84,10 @@ class Game:
     def drawBoard(self):
         for row in range(self.dimention):
             for col in range(self.dimention):
-                self.board[row][col].draw(self.screen)
+                if self.currGhost and self.currGhost.index.y == col and self.currGhost.index.x == row:
+                    self.board[row][col].draw(self.screen, True)
+                else:
+                    self.board[row][col].draw(self.screen)
 
     def draw(self):
         self.drawPlayerTurn()
@@ -127,4 +130,29 @@ class Game:
         print("\n")
         return board_copy
         '''
+
+    def coordsToIndexBoard(self, click : Position):
+        if self.clickInsideBoard(click):
+            indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
+            indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
+            return Position(indexY, indexX)
+
+    def clickInsideBoard(self, click : Position):
+        return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
+
+    def moveCurrGhost(self, click : Position):
+        if self.currGhost and self.clickInsideBoard(click):
+            ghostIndexes = self.coordsToIndexBoard(click)
+            if [ghostIndexes.y, ghostIndexes.x] in self.possibleMoves(self.currGhost):
+                print("ya bro pode ir para ai")
+
+    def selectGhost(self, click : Position):
+        if self.clickInsideBoard(click):
+            ghostIndexes = self.coordsToIndexBoard(click)
+            for ghost in self.ghosts:
+                if ghost.index == ghostIndexes:
+                    self.currGhost = ghost
+
+
+
 
