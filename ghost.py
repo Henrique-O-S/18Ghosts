@@ -10,6 +10,7 @@ class Ghost:
         self.player = player
         self.image = self.loadImage()
         self.chosen = False
+        self.inDungeon = False
 
     def __eq__(self, other):
         return self.color == other.color and self.player == other.player
@@ -27,3 +28,11 @@ class Ghost:
 
     def loadImage(self):
         return pygame.transform.scale(pygame.image.load('images/' + self.color + '_ghost_' + self.player.name[-1] + '.png').convert_alpha(), (90, 90))
+
+    def winsFight(self, defGhost):
+        if self.color == "red":
+            return defGhost.color == "blue"
+        if self.color == "blue":
+            return defGhost.color == "yellow"
+        if self.color == "yellow":
+            return defGhost.color == "red"

@@ -108,7 +108,7 @@ class Game:
             self.state = GameState.PLAYING
 
     def possibleMoves(self, ghost : Ghost):
-        row, col = ghost.position.x, ghost.position.y
+        row, col = ghost.position.y, ghost.position.x
         board_copy = [row[:] for row in self.board]
         possible_moves = []
         for drow, dcol in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
@@ -141,8 +141,20 @@ class Game:
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
 
     def moveCurrGhost(self, index : Position):
-        if [index.y, index.x] in self.possibleMoves(self.currGhost):
-            print("ya bro pode ir para ai")
+        if [index.y, index.x] in self.possibleMoves(self.currGhost): # move is possible
+            for ghost in self.ghosts:
+                if ghost.index == index: # going to this (another) ghost's tile
+                    if self.currGhost.winsFight(ghost):
+                        ghost.inDungeon = True
+                        self.currGhost.index = index
+                        self.currGhost = 0
+                    else:
+                        self.currGhost.inDungeon = True
+                        self.currGhost = 0
+                    return
+
+            self.currGhost.index = index
+            self.currGhost = 0
 
     def selectGhost(self, click : Position):
         if self.clickInsideBoard(click):

@@ -4,7 +4,6 @@ from position import Position
 class Portal:
     def __init__(self, color):
         self.color = color
-        print(color)
         self.setDirection()
         self.loadImage()
 
