@@ -143,7 +143,7 @@ class Game:
     def moveCurrGhost(self, index : Position):
         if [index.y, index.x] in self.possibleMoves(self.currGhost): # move is possible
             for ghost in self.ghosts:
-                if ghost.index == index: # going to this (another) ghost's tile
+                if ghost.index == index and not ghost.inDungeon: # going to this (another) ghost's tile
                     if self.currGhost.winsFight(ghost):
                         ghost.inDungeon = True
                         self.currGhost.index = index

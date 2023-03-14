@@ -18,7 +18,7 @@ class Ghost:
         return "player = " + str(self.player) + " | color = " + str(self.color)
 
     def draw(self, screen):
-        if self.chosen:
+        if self.chosen and not self.inDungeon:
             screen.blit(self.image, (self.position.x, self.position.y))
 
     def setIndexandPos(self, index : Position, position : Position):
