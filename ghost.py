@@ -27,7 +27,7 @@ class Ghost:
         self.chosen = True
 
     def loadImage(self):
-        return pygame.transform.scale(pygame.image.load('images/' + self.color + '_ghost_' + self.player.name[-1] + '.png').convert_alpha(), (90, 90))
+        return pygame.transform.scale(pygame.image.load('images/' + self.color + '_ghost_' + self.player.name[-1] + '.png').convert_alpha(), (80, 80))
 
     def winsFight(self, defGhost):
         if self.color == "red":

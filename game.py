@@ -3,6 +3,7 @@ import random
 from pygame import SurfaceType, Surface
 
 from defines import *
+from dungeon import Dungeon
 from ghost import Ghost
 from portal import Portal
 from position import Position
@@ -33,10 +34,12 @@ class Game:
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE),Tile(COLOR_RED_TILE)],
             [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE, Portal("blue")), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
         ]
-        x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 2
-        y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 2
+        x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 1.3
+        y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 5
 
         self.boardCoords = Position(x,y)
+        self.dungeon = Dungeon(Position(x - 7 * TILEWIDTH, y))
+
 
         for row in range(self.dimention):
             for col in range(self.dimention):
@@ -57,15 +60,13 @@ class Game:
     def chooseGhostTile(self, click : Position):
         if self.clickInsideBoard(click):
             indexes = self.coordsToIndexBoard(click)
-            rowIndex = indexes.x
-            colIndex = indexes.y
-            tile = self.board[rowIndex][colIndex]
+            tile = self.board[indexes.y][indexes.x]
             if not (tile.full or tile.portal):
                 for ghost in self.ghosts:
                     if not ghost.chosen:
                         if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
                             tile.full = True
-                            ghost.setIndexandPos(Position(rowIndex, colIndex), Position(colIndex * TILEWIDTH + self.boardCoords.x, rowIndex * TILEHEIGHT + self.boardCoords.y))
+                            ghost.setIndexandPos(Position(indexes.x, indexes.y), Position(indexes.x * TILEWIDTH + self.boardCoords.x, indexes.y * TILEHEIGHT + self.boardCoords.y))
                             self.switchPlayers()
                             self.updateState()
 
@@ -85,14 +86,18 @@ class Game:
     def drawBoard(self):
         for row in range(self.dimention):
             for col in range(self.dimention):
-                if self.currGhost and self.currGhost.index.y == col and self.currGhost.index.x == row:
+                if self.currGhost and self.currGhost.index.y == row and self.currGhost.index.x == col:
                     self.board[row][col].draw(self.screen, True)
                 else:
                     self.board[row][col].draw(self.screen)
 
+    def drawDungeon(self):
+        self.dungeon.draw(self.screen)
+
     def draw(self):
         self.drawPlayerTurn()
         self.drawBoard()
+        self.drawDungeon()
         self.drawGhosts()
 
     def switchPlayers(self):
@@ -109,40 +114,53 @@ class Game:
             self.state = GameState.PLAYING
 
     def possibleMoves(self, ghost : Ghost):
-        row, col = ghost.position.y, ghost.position.x
+        row, col = ghost.index.x, ghost.index.y
         board_copy = [row[:] for row in self.board]
         possible_moves = []
         for drow, dcol in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             new_row, new_col = row + drow, col + dcol
             if 0 <= new_row < self.dimention and 0 <= new_col < self.dimention:
-                new_tile = board_copy[new_row][new_col]
-                if not new_tile.full and not new_tile.portal:
-                    board_copy[row][col].full = False
-                    board_copy[new_row][new_col].full = True
+                if self.checkTile(ghost, new_row, new_col):
                     possible_moves.append((new_row, new_col))
         print("Possible moves:")
         for move in possible_moves:
             print("  ghost at index ({},{}) to index ({},{})".format(row, col, move[0], move[1]))
         return possible_moves
-        '''
-        print("Updated Board:")
-        for row in board_copy:
-            print([str(tile) for tile in row])
-        print("\n")
-        return board_copy
-        '''
+
+    def checkTile(self, ghost: Ghost, new_row, new_col):
+        if self.board[new_row][new_col].portal:
+            return False
+        for g in self.ghosts:
+            if g.index.x == new_col and g.index.y == new_row and g.color == ghost.color:
+                return False
+        return True
+
+    def execute_random_move(self):
+        playerGhosts = [ghost for ghost in self.ghosts if ghost.player == self.currPlayer]
+        ghost = random.choice(playerGhosts)
+        move = random.choice(self.possibleMoves(ghost))
+        self.currGhost = ghost
+        self.moveCurrGhost(Position(move[1], move[0]))
+
+    def execute_minimax_move(evaluate_func, depth):
+        return True
+
+    def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
+        return True
+
 
     def coordsToIndexBoard(self, click : Position):
         if self.clickInsideBoard(click):
             indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
             indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
-            return Position(indexY, indexX)
+            return Position(indexX, indexY)
 
     def clickInsideBoard(self, click : Position):
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
 
     def moveCurrGhost(self, index : Position):
-        if [index.y, index.x] in self.possibleMoves(self.currGhost): # move is possible
+        print(index.x, index.y)
+        if [index.x, index.y] in self.possibleMoves(self.currGhost): # move is possible
             for ghost in self.ghosts:
                 if ghost.index == index and not ghost.inDungeon: # going to this (another) ghost's tile
                     if self.currGhost.winsFight(ghost):
@@ -165,6 +183,7 @@ class Game:
                 return
             for ghost in self.ghosts:
                 if ghost.index == ghostIndexes: # ghost that player clicked
+                    print(ghost.index.x, ghost.index.y)
                     if self.currGhost: # if another one is selected
                         self.moveCurrGhost(ghost.index)
                     elif ghost.player == self.currPlayer:
