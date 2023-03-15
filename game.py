@@ -3,6 +3,7 @@ import random
 from pygame import SurfaceType, Surface
 
 from defines import *
+from dungeon import Dungeon
 from ghost import Ghost
 from portal import Portal
 from position import Position
@@ -33,10 +34,12 @@ class Game:
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE),Tile(COLOR_RED_TILE)],
             [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE, Portal("blue")), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
         ]
-        x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 2
-        y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 2
+        x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 1.3
+        y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 5
 
         self.boardCoords = Position(x,y)
+
+        self.dungeon = Dungeon(Position(x - 7 * TILEWIDTH, y))
 
 
         for row in range(self.dimention):
@@ -89,9 +92,13 @@ class Game:
                 else:
                     self.board[row][col].draw(self.screen)
 
+    def drawDungeon(self):
+        self.dungeon.draw(self.screen)
+
     def draw(self):
         self.drawPlayerTurn()
         self.drawBoard()
+        self.drawDungeon()
         self.drawGhosts()
 
     def switchPlayers(self):
@@ -107,7 +114,7 @@ class Game:
                     return
             self.state = GameState.PLAYING
 
-    def possibleMoves(self, ghost : Ghost):
+    def possibleMoves(self, ghost: Ghost):
         row, col = ghost.index.x, ghost.index.y
         board_copy = [row[:] for row in self.board]
         possible_moves = []
@@ -121,9 +128,16 @@ class Game:
             print("  ghost at index ({},{}) to index ({},{})".format(row, col, move[0], move[1]))
         return possible_moves
 
-    def checkTile(self, ghost : Ghost, new_row, new_col):
+    def checkTile(self, ghost: Ghost, new_row, new_col):
         if self.board[new_row][new_col].portal:
             return False
+        for g in self.ghosts:
+            if g.index.x == new_col and g.index.y == new_row and g.color == ghost.color:
+                return False
+        return True
+
+    def checkTile(self, ghost : Ghost, new_row, new_col):
+        # check portal
         for g in self.ghosts:
             if g.index.x == new_col and g.index.y == new_row and g.color == ghost.color:
                 return False

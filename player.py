@@ -14,6 +14,6 @@ class Player:
         stringToDisplay = self.name + '\'s turn' + pickGhost
         (textWidth, textHeight) = font.size(stringToDisplay)
         x = (WIDTH - textWidth) / 2
-        y = HEIGHT / 9
+        y = HEIGHT / 50
         text_surface = font.render(stringToDisplay, False, COLOR_FONT, COLOR_FONT_BACKGROUND)
         screen.blit(text_surface, (x, y))
