@@ -8,6 +8,7 @@ class Player:
         self.name = name
         self.playerType = playerType
         self.color = COLOR_NEUTRAL_TILE
+        self.colors_cleared = {'red': 0, 'yellow': 0, 'blue': 0}
     def __str__(self):
         return str(self.name)
     def draw(self, screen, font : Font, pickGhost):

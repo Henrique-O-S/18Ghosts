@@ -32,6 +32,13 @@ COLOR_BACKGROUND = (185, 180, 158)
 COLOR_TILE_BORDER = (0, 0, 0)
 TILEBORDERWIDTH = 1
 
+RP_X = 2
+RP_Y = 0
+YP_X = 4
+YP_Y = 2
+BP_X = 2
+BP_Y = 4
+
 
 fps = 60
 

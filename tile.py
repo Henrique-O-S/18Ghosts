@@ -14,6 +14,11 @@ class Tile:
         self.position = position
         if self.portal:
             self.portal.setPos(position)
+
+    def setIndex(self, index : Position):
+        self.index = index
+        if self.portal:
+            self.portal.setIndex(index)
     def draw(self, screen, picked = False):
         x = self.position.x
         y = self.position.y

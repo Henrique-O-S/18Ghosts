@@ -13,6 +13,9 @@ class Portal:
     def setPos(self, position : Position):
         self.position = position
 
+    def setIndex(self, index : Position):
+        self.index = index
+
     def draw(self, screen):
         screen.blit(self.image, (self.position.x, self.position.y))
 
