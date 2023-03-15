@@ -59,15 +59,13 @@ class Game:
     def chooseGhostTile(self, click : Position):
         if self.clickInsideBoard(click):
             indexes = self.coordsToIndexBoard(click)
-            rowIndex = indexes.x
-            colIndex = indexes.y
-            tile = self.board[rowIndex][colIndex]
+            tile = self.board[indexes.y][indexes.x]
             if not (tile.full or tile.portal):
                 for ghost in self.ghosts:
                     if not ghost.chosen:
                         if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
                             tile.full = True
-                            ghost.setIndexandPos(Position(rowIndex, colIndex), Position(colIndex * TILEWIDTH + self.boardCoords.x, rowIndex * TILEHEIGHT + self.boardCoords.y))
+                            ghost.setIndexandPos(Position(indexes.x, indexes.y), Position(indexes.x * TILEWIDTH + self.boardCoords.x, indexes.y * TILEHEIGHT + self.boardCoords.y))
                             self.switchPlayers()
                             self.updateState()
 
@@ -87,7 +85,7 @@ class Game:
     def drawBoard(self):
         for row in range(self.dimention):
             for col in range(self.dimention):
-                if self.currGhost and self.currGhost.index.y == col and self.currGhost.index.x == row:
+                if self.currGhost and self.currGhost.index.y == row and self.currGhost.index.x == col:
                     self.board[row][col].draw(self.screen, True)
                 else:
                     self.board[row][col].draw(self.screen)
@@ -114,7 +112,7 @@ class Game:
                     return
             self.state = GameState.PLAYING
 
-    def possibleMoves(self, ghost: Ghost):
+    def possibleMoves(self, ghost : Ghost):
         row, col = ghost.index.x, ghost.index.y
         board_copy = [row[:] for row in self.board]
         possible_moves = []
@@ -136,24 +134,32 @@ class Game:
                 return False
         return True
 
-    def checkTile(self, ghost : Ghost, new_row, new_col):
-        # check portal
-        for g in self.ghosts:
-            if g.index.x == new_col and g.index.y == new_row and g.color == ghost.color:
-                return False
+    def execute_random_move(self):
+        playerGhosts = [ghost for ghost in self.ghosts if ghost.player == self.currPlayer]
+        ghost = random.choice(playerGhosts)
+        move = random.choice(self.possibleMoves(ghost))
+        self.currGhost = ghost
+        self.moveCurrGhost(Position(move[1], move[0]))
+
+    def execute_minimax_move(evaluate_func, depth):
         return True
-        
+
+    def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
+        return True
+
+
     def coordsToIndexBoard(self, click : Position):
         if self.clickInsideBoard(click):
             indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
             indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
-            return Position(indexY, indexX)
+            return Position(indexX, indexY)
 
     def clickInsideBoard(self, click : Position):
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
 
     def moveCurrGhost(self, index : Position):
-        if [index.y, index.x] in self.possibleMoves(self.currGhost): # move is possible
+        print(index.x, index.y)
+        if [index.x, index.y] in self.possibleMoves(self.currGhost): # move is possible
             for ghost in self.ghosts:
                 if ghost.index == index and not ghost.inDungeon: # going to this (another) ghost's tile
                     if self.currGhost.winsFight(ghost):
@@ -176,6 +182,7 @@ class Game:
                 return
             for ghost in self.ghosts:
                 if ghost.index == ghostIndexes: # ghost that player clicked
+                    print(ghost.index.x, ghost.index.y)
                     if self.currGhost: # if another one is selected
                         self.moveCurrGhost(ghost.index)
                     elif ghost.player == self.currPlayer:
