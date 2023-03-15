@@ -38,7 +38,8 @@ class Game:
         y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 5
 
         self.boardCoords = Position(x,y)
-        self.dungeon = Dungeon(Position(x - 7 * TILEWIDTH, y))
+
+        self.dungeon = Dungeon(Position(x - 7 * TILEWIDTH, y + TILEHEIGHT))
 
 
         for row in range(self.dimention):
@@ -66,7 +67,9 @@ class Game:
                     if not ghost.chosen:
                         if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
                             tile.full = True
-                            ghost.setIndexandPos(Position(indexes.x, indexes.y), Position(indexes.x * TILEWIDTH + self.boardCoords.x, indexes.y * TILEHEIGHT + self.boardCoords.y))
+
+                            ghost.setIndexandPos(Position(indexes.x, indexes.y), self.boardCoords)
+
                             self.switchPlayers()
                             self.updateState()
 
@@ -74,6 +77,8 @@ class Game:
 
     def drawGhosts(self):
         for ghost in self.ghosts:
+            ghost.draw(self.screen)
+        for ghost in self.dungeon.ghosts:
             ghost.draw(self.screen)
 
     def drawPlayerTurn(self):
@@ -114,17 +119,16 @@ class Game:
             self.state = GameState.PLAYING
 
     def possibleMoves(self, ghost : Ghost):
-        row, col = ghost.index.x, ghost.index.y
-        board_copy = [row[:] for row in self.board]
+        row, col = ghost.index.y, ghost.index.x
         possible_moves = []
-        for drow, dcol in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        for dcol, drow in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             new_row, new_col = row + drow, col + dcol
             if 0 <= new_row < self.dimention and 0 <= new_col < self.dimention:
                 if self.checkTile(ghost, new_row, new_col):
-                    possible_moves.append((new_row, new_col))
+                    possible_moves.append(Position(new_col, new_row))
         print("Possible moves:")
         for move in possible_moves:
-            print("  ghost at index ({},{}) to index ({},{})".format(row, col, move[0], move[1]))
+            print("  ghost at index ({},{}) to index ({},{})".format(col, row, move.x, move.y))
         return possible_moves
 
     def checkTile(self, ghost: Ghost, new_row, new_col):
@@ -160,20 +164,37 @@ class Game:
 
     def moveCurrGhost(self, index : Position):
         print(index.x, index.y)
-        if [index.x, index.y] in self.possibleMoves(self.currGhost): # move is possible
-            for ghost in self.ghosts:
-                if ghost.index == index and not ghost.inDungeon: # going to this (another) ghost's tile
-                    if self.currGhost.winsFight(ghost):
-                        ghost.inDungeon = True
-                        self.currGhost.index = index
-                        self.currGhost = 0
-                    else:
-                        self.currGhost.inDungeon = True
-                        self.currGhost = 0
-                    return
+        if index in self.possibleMoves(self.currGhost): # move is possible
+            print("move is possible")
+            for i in range(len(self.ghosts)):
+                if self.ghosts[i] == self.currGhost:
+                    for j in range(len(self.ghosts)):
+                        if self.ghosts[j].index == index: # going to this (another) ghost's tile
+                            if self.ghosts[i].winsFight(self.ghosts[j]):
+                                print("ganhou")
+                                self.dungeon.addGhost(self.ghosts[j])
+                                self.ghosts[i].setIndexandPos(index, self.boardCoords)
+                                print("novo index attGhost", index.x, index.y)
+                                self.currGhost = 0
+                                self.ghosts.remove(self.ghosts[j])
+                                self.switchPlayers()
+                                return
+                            else:
+                                print("perdeu")
+                                self.dungeon.addGhost(self.ghosts[i])
+                                self.ghosts.remove(self.ghosts[i])
+                                self.currGhost = 0
+                                self.switchPlayers()
+                                return
 
-            self.currGhost.index = index
-            self.currGhost = 0
+            for i in range(len(self.ghosts)):
+                if self.ghosts[i] == self.currGhost:
+                    print("vazio")
+                    self.ghosts[i].setIndexandPos(index, self.boardCoords)
+                    print("novo index attGhost", self.ghosts[i].index.x, self.ghosts[i].index.y)
+                    self.currGhost = 0
+                    self.switchPlayers()
+                    return
 
     def selectGhost(self, click : Position):
         if self.clickInsideBoard(click):
@@ -183,12 +204,12 @@ class Game:
                 return
             for ghost in self.ghosts:
                 if ghost.index == ghostIndexes: # ghost that player clicked
-                    print(ghost.index.x, ghost.index.y)
                     if self.currGhost: # if another one is selected
                         self.moveCurrGhost(ghost.index)
                     elif ghost.player == self.currPlayer:
                         self.currGhost = ghost
                     return
+            self.moveCurrGhost(ghostIndexes)
 
     def manhattan_distances(self, player : Player):
         # returns the sum of manhattan distances from ghosts to their respective exits

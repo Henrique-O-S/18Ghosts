@@ -28,7 +28,6 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     running = False
             elif event.type == pygame.MOUSEBUTTONDOWN: #choose tile for ghost in initial phase
-                print(game.state)
                 x, y = pygame.mouse.get_pos()
                 if game.state == GameState.PICKING:
                     game.chooseGhostTile(Position(x,y))

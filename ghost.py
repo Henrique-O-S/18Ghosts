@@ -10,20 +10,19 @@ class Ghost:
         self.player = player
         self.image = self.loadImage()
         self.chosen = False
-        self.inDungeon = False
 
     def __eq__(self, other):
-        return self.color == other.color and self.player == other.player
+        return self.color == other.color and self.player == other.player and self.index == other.index and self.position == other.position
     def __str__(self):
         return "player = " + str(self.player) + " | color = " + str(self.color)
 
     def draw(self, screen):
-        if self.chosen and not self.inDungeon:
+        if self.chosen:
             screen.blit(self.image, (self.position.x, self.position.y))
 
-    def setIndexandPos(self, index : Position, position : Position):
+    def setIndexandPos(self, index : Position, coords: Position):
         self.index = index
-        self.position = position
+        self.position = Position(coords.x + index.x * TILEWIDTH, coords.y + index.y * TILEHEIGHT)
         self.chosen = True
 
     def loadImage(self):
