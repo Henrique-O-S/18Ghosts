@@ -108,29 +108,27 @@ class Game:
             self.state = GameState.PLAYING
 
     def possibleMoves(self, ghost : Ghost):
-        row, col = ghost.position.y, ghost.position.x
+        row, col = ghost.index.x, ghost.index.y
         board_copy = [row[:] for row in self.board]
         possible_moves = []
         for drow, dcol in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             new_row, new_col = row + drow, col + dcol
             if 0 <= new_row < self.dimention and 0 <= new_col < self.dimention:
-                new_tile = board_copy[new_row][new_col]
-                if not new_tile.full and not new_tile.portal:
-                    board_copy[row][col].full = False
-                    board_copy[new_row][new_col].full = True
+                if self.checkTile(ghost, new_row, new_col):
                     possible_moves.append((new_row, new_col))
         print("Possible moves:")
         for move in possible_moves:
             print("  ghost at index ({},{}) to index ({},{})".format(row, col, move[0], move[1]))
         return possible_moves
-        '''
-        print("Updated Board:")
-        for row in board_copy:
-            print([str(tile) for tile in row])
-        print("\n")
-        return board_copy
-        '''
 
+    def checkTile(self, ghost : Ghost, new_row, new_col):
+        if self.board[new_row][new_col].portal:
+            return False
+        for g in self.ghosts:
+            if g.index.x == new_col and g.index.y == new_row and g.color == ghost.color:
+                return False
+        return True
+        
     def coordsToIndexBoard(self, click : Position):
         if self.clickInsideBoard(click):
             indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
