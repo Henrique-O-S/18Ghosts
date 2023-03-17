@@ -2,7 +2,6 @@ import pygame
 from defines import *
 from pygame.font import Font
 
-
 class Player:
     def __init__(self, name, playerType):
         self.name = name

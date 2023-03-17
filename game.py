@@ -139,20 +139,6 @@ class Game:
                 return False
         return True
 
-    def execute_random_move(self):
-        playerGhosts = [ghost for ghost in self.ghosts if ghost.player == self.currPlayer]
-        ghost = random.choice(playerGhosts)
-        move = random.choice(self.possibleMoves(ghost))
-        self.currGhost = ghost
-        self.moveCurrGhost(Position(move[1], move[0]))
-
-    def execute_minimax_move(evaluate_func, depth):
-        return True
-
-    def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
-        return True
-
-
     def coordsToIndexBoard(self, click : Position):
         if self.clickInsideBoard(click):
             indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
@@ -192,6 +178,7 @@ class Game:
                                 else:
                                     self.board[YP_Y][YP_X].portal.rotate()
                                 self.ghosts.remove(self.ghosts[j])
+                                self.ghostEscape()
                                 self.switchPlayers()
                                 return
                             else:
@@ -206,6 +193,7 @@ class Game:
 
                                 self.ghosts.remove(self.ghosts[i])
                                 self.currGhost = 0
+                                self.ghostEscape()
                                 self.switchPlayers()
                                 return
 
@@ -232,7 +220,82 @@ class Game:
                         self.currGhost = ghost
                     return
             self.moveCurrGhost(ghostIndexes)
+            self.ghostEscape()
 
+    def findGhostID(self, index : Position):
+        for i in range(len(self.ghosts)):
+            if self.ghosts[i].index.x == index.x and self.ghosts[i].index.y == index.y:
+                return i
+        return -1
+
+    def ghostEscape(self):
+        if (self.redEscape()):
+            self.currPlayer.colors_cleared["red"] += 1
+            return True
+        elif (self.yellowEscape()):
+            self.currPlayer.colors_cleared["yellow"] += 1
+            return True
+        elif (self.blueEscape()):
+            self.currPlayer.colors_cleared["blue"] += 1
+            return True   
+        return False
+
+    def redEscape(self):
+        dir = self.board[RP_Y][RP_X].portal.direction
+        if PORTAL_DIR[dir] == "LEFT":
+            id = self.findGhostID(Position(RP_X - 1, RP_Y))
+            if id != -1 and self.ghosts[id].color == "red":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "DOWN":
+            id = self.findGhostID(Position(RP_X, RP_Y + 1))
+            if id != -1 and self.ghosts[id].color == "red":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "RIGHT":
+            id = self.findGhostID(Position(RP_X + 1, RP_Y))
+            if id != -1 and self.ghosts[id].color == "red":
+                self.ghosts.remove(self.ghosts[id])
+                return True 
+        return False
+    
+    def yellowEscape(self):
+        dir = self.board[YP_Y][YP_X].portal.direction
+        if PORTAL_DIR[dir] == "UP":
+            id = self.findGhostID(Position(YP_X, YP_Y - 1))
+            if id != -1 and self.ghosts[id].color == "yellow":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "LEFT":
+            id = self.findGhostID(Position(YP_X - 1, YP_Y))
+            if id != -1 and self.ghosts[id].color == "yellow":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "DOWN":
+            id = self.findGhostID(Position(YP_X, YP_Y + 1))
+            if id != -1 and self.ghosts[id].color == "yellow":
+                self.ghosts.remove(self.ghosts[id])
+                return True 
+        return False
+    
+    def blueEscape(self):
+        dir = self.board[BP_Y][BP_X].portal.direction
+        if PORTAL_DIR[dir] == "LEFT":
+            id = self.findGhostID(Position(BP_X - 1, BP_Y))
+            if id != -1 and self.ghosts[id].color == "blue":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "UP":
+            id = self.findGhostID(Position(BP_X, BP_Y - 1))
+            if id != -1 and self.ghosts[id].color == "blue":
+                self.ghosts.remove(self.ghosts[id])
+                return True
+        elif PORTAL_DIR[dir] == "RIGHT":
+            id = self.findGhostID(Position(BP_X + 1, BP_Y))
+            if id != -1 and self.ghosts[id].color == "blue":
+                self.ghosts.remove(self.ghosts[id])
+                return True 
+        return False
 
     def manhattan_distances(self, player : Player):
         # returns the sum of manhattan distances from ghosts to their respective exits
@@ -277,10 +340,23 @@ class Game:
         cost = self.manhattan_distances(self, player)
         for ghost in self.ghosts():
             if ghost.player != player:
-                cost += 1;
+                cost += 1
             else:
                 for near_by_ghost in self.ghosts():
                     if near_by_ghost.player != player and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
                         cost += 8
 
-        return cost;
+        return cost
+
+    def execute_random_move(self):
+        playerGhosts = [ghost for ghost in self.ghosts if ghost.player == self.currPlayer]
+        ghost = random.choice(playerGhosts)
+        move = random.choice(self.possibleMoves(ghost))
+        self.currGhost = ghost
+        self.moveCurrGhost(Position(move[1], move[0]))
+
+    def execute_minimax_move(evaluate_func, depth):
+        return True
+
+    def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
+        return True

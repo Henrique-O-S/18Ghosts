@@ -3,7 +3,6 @@ from game import Game
 from player import Player
 import pygame
 from position import Position
-from ghost import Ghost
 
 def main():
 
