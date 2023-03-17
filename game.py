@@ -159,8 +159,17 @@ class Game:
             indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
             return Position(indexX, indexY)
 
+    def coordsToIndexDungeon(self, click: Position):
+        if self.clickInsideDungeon(click):
+            indexY = int((click.y - self.dungeon.dungeonCoords.y) // TILEHEIGHT)
+            indexX = (int(click.x - self.dungeon.dungeonCoords.x) // TILEWIDTH)
+            return Position(indexX, indexY)
+
     def clickInsideBoard(self, click : Position):
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
+
+    def clickInsideDungeon(self, click : Position):
+        return click.x >= self.dungeon.dungeonCoords.x and click.x <= self.dungeon.dungeonCoords.x + 6 * TILEWIDTH and click.y >= self.dungeon.dungeonCoords.y and click.y <= self.dungeon.dungeonCoords.y + 3 * TILEHEIGHT
 
     def moveCurrGhost(self, index : Position):
         print(index.x, index.y)
@@ -176,12 +185,25 @@ class Game:
                                 self.ghosts[i].setIndexandPos(index, self.boardCoords)
                                 print("novo index attGhost", index.x, index.y)
                                 self.currGhost = 0
+                                if self.ghosts[j].color == "red":
+                                    self.board[RP_Y][RP_X].portal.rotate()
+                                elif self.ghosts[j].color == "blue":
+                                    self.board[BP_Y][BP_X].portal.rotate()
+                                else:
+                                    self.board[YP_Y][YP_X].portal.rotate()
                                 self.ghosts.remove(self.ghosts[j])
                                 self.switchPlayers()
                                 return
                             else:
                                 print("perdeu")
                                 self.dungeon.addGhost(self.ghosts[i])
+                                if self.ghosts[i].color == "red":
+                                    self.board[RP_Y][RP_X].portal.rotate()
+                                elif self.ghosts[i].color == "blue":
+                                    self.board[BP_Y][BP_X].portal.rotate()
+                                else:
+                                    self.board[YP_Y][YP_X].portal.rotate()
+
                                 self.ghosts.remove(self.ghosts[i])
                                 self.currGhost = 0
                                 self.switchPlayers()
@@ -210,6 +232,7 @@ class Game:
                         self.currGhost = ghost
                     return
             self.moveCurrGhost(ghostIndexes)
+
 
     def manhattan_distances(self, player : Player):
         # returns the sum of manhattan distances from ghosts to their respective exits
