@@ -18,8 +18,8 @@ class Game:
         self.player2 = player2
         self.screen = screen
         self.ghosts = self.generateGhosts()
-        self.dimention = 5
-        self.boardCorners = [0, self.dimention - 1, self.dimention * self.dimention - self.dimention, self.dimention * self.dimention - 1]
+        self.dimension = 5
+        self.boardCorners = [0, self.dimension - 1, self.dimension * self.dimension - self.dimension, self.dimension * self.dimension - 1]
         self.board = self.generateBoard()
         self.currPlayer = player1
         self.currGhost : Ghost | int = 0
@@ -34,16 +34,16 @@ class Game:
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_NEUTRAL_TILE), Tile(COLOR_YELLOW_TILE), Tile(COLOR_NEUTRAL_TILE),Tile(COLOR_RED_TILE)],
             [Tile(COLOR_YELLOW_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_BLUE_TILE, Portal("blue")), Tile(COLOR_BLUE_TILE),Tile(COLOR_YELLOW_TILE)]
         ]
-        x = (self.screen.get_width() - self.dimention * TILEWIDTH) / 1.3
-        y = (self.screen.get_height() - self.dimention * TILEHEIGHT) / 5
+        x = (self.screen.get_width() - self.dimension * TILEWIDTH) / 1.3
+        y = (self.screen.get_height() - self.dimension * TILEHEIGHT) / 5
 
         self.boardCoords = Position(x,y)
 
         self.dungeon = Dungeon(Position(x - 7 * TILEWIDTH, y + TILEHEIGHT))
 
 
-        for row in range(self.dimention):
-            for col in range(self.dimention):
+        for row in range(self.dimension):
+            for col in range(self.dimension):
                 board[row][col].setPos(Position(x + TILEWIDTH * col, y + TILEHEIGHT * row))
                 board[row][col].setIndex(Position(col, row))
 
@@ -89,8 +89,8 @@ class Game:
 
 
     def drawBoard(self):
-        for row in range(self.dimention):
-            for col in range(self.dimention):
+        for row in range(self.dimension):
+            for col in range(self.dimension):
                 if self.currGhost and self.currGhost.index.y == row and self.currGhost.index.x == col:
                     self.board[row][col].draw(self.screen, True)
                 else:
@@ -123,7 +123,7 @@ class Game:
         possible_moves = []
         for dcol, drow in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             new_row, new_col = row + drow, col + dcol
-            if 0 <= new_row < self.dimention and 0 <= new_col < self.dimention:
+            if 0 <= new_row < self.dimension and 0 <= new_col < self.dimension:
                 if self.checkTile(ghost, new_row, new_col):
                     possible_moves.append(Position(new_col, new_row))
         print("Possible moves:")
@@ -152,7 +152,7 @@ class Game:
             return Position(indexX, indexY)
 
     def clickInsideBoard(self, click : Position):
-        return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimention * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimention * TILEHEIGHT
+        return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.dimension * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.dimension * TILEHEIGHT
 
     def clickInsideDungeon(self, click : Position):
         return click.x >= self.dungeon.dungeonCoords.x and click.x <= self.dungeon.dungeonCoords.x + 6 * TILEWIDTH and click.y >= self.dungeon.dungeonCoords.y and click.y <= self.dungeon.dungeonCoords.y + 3 * TILEHEIGHT
@@ -300,7 +300,6 @@ class Game:
     def manhattan_distances(self, player : Player):
         # returns the sum of manhattan distances from ghosts to their respective exits
         board = self.board
-        side = len(board)  # the size of the side of the board (only for square boards)
 
         total = 0
 
@@ -334,6 +333,15 @@ class Game:
                     else:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y)
 
+        for ghost in self.dungeon():
+            if ghost.player == player:
+                if ghost.color == 'red' and player.colors_cleared.get('red') == 0:
+                    total += 8
+                elif ghost.color == 'yellow' and player.colors_cleared.get('yellow') == 0:
+                    total += 8
+                elif ghost.color == 'blue' and player.colors_cleared.get('blue') == 0:
+                    total += 8
+
         return total
 
     def play_evaluation(self, player : Player):
@@ -341,10 +349,15 @@ class Game:
         for ghost in self.ghosts():
             if ghost.player != player:
                 cost += 1
+            elif ghost.player == player:
+                cost += 1
             else:
                 for near_by_ghost in self.ghosts():
                     if near_by_ghost.player != player and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
                         cost += 8
+        for ghost in self.dungeon():
+            if ghost.player == player:
+                cost += 1
 
         return cost
 
