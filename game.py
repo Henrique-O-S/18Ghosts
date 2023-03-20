@@ -306,29 +306,29 @@ class Game:
         for ghost in self.ghosts:
             if ghost.player == player:
                 if ghost.color == 'red' and player.colors_cleared.get('red') == 0:
-                    if self.portals.get('red').direction == 0:
+                    if self.board[RP_Y][RP_X].portal.direction == 0:
                         total += abs(ghost.index.x - self.board[RP_Y][RP_X].index.x + 1) + abs(ghost.index.y - self.board[RP_Y][RP_X].index.y)
-                    elif self.portals.get('red').direction == 1:
+                    elif self.board[RP_Y][RP_X].portal.direction == 1:
                         total += abs(ghost.index.x - self.board[RP_Y][RP_X].index.x + 1) + abs(ghost.index.y - self.board[RP_Y][RP_X].index.y)
-                    elif self.portals.get('red').direction == 2:
+                    elif self.board[RP_Y][RP_X].portal.direction == 2:
                         total += abs(ghost.index.x - self.board[RP_Y][RP_X].index.x) + abs(ghost.index.y - self.board[RP_Y][RP_X].index.y + 1)
                     else:
                         total += abs(ghost.index.x - self.board[RP_Y][RP_X].index.x - 1) + abs(ghost.index.y - self.board[RP_Y][RP_X].index.y)
                 elif ghost.color == 'yellow' and player.colors_cleared.get('yellow') == 0:
-                    if self.portals.get('yellow').direction == 0:
+                    if self.board[YP_Y][YP_X].portal.direction == 0:
                         total += abs(ghost.index.x - self.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - self.board[YP_Y][YP_X].index.y - 1)
-                    elif self.portals.get('yellow').direction == 1:
+                    elif self.board[YP_Y][YP_X].portal.direction == 1:
                         total += abs(ghost.index.x - self.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - self.board[YP_Y][YP_X].index.y + 1)
-                    elif self.portals.get('yellow').direction == 2:
+                    elif self.board[YP_Y][YP_X].portal.direction == 2:
                         total += abs(ghost.index.x - self.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - self.board[YP_Y][YP_X].index.y + 1)
                     else:
                         total += abs(ghost.index.x - self.board[YP_Y][YP_X].index.x - 1) + abs(ghost.index.y - self.board[YP_Y][YP_X].index.y)
                 elif ghost.color == 'blue' and player.colors_cleared.get('blue') == 0:
-                    if self.portals.get('blue').direction == 0:
+                    if self.board[BP_Y][BP_X].portal.direction == 0:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y - 1)
-                    elif self.portals.get('blue').direction == 1:
+                    elif self.board[BP_Y][BP_X].portal.direction == 1:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x + 1) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y)
-                    elif self.portals.get('blue').direction == 2:
+                    elif self.board[BP_Y][BP_X].portal.direction == 2:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y)
                     else:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y)
@@ -346,16 +346,16 @@ class Game:
 
     def play_evaluation(self, player : Player):
         cost = self.manhattan_distances(self, player)
-        for ghost in self.ghosts():
+        for ghost in self.ghosts:
             if ghost.player != player:
                 cost += 1
             elif ghost.player == player:
                 cost += 1
-            else:
-                for near_by_ghost in self.ghosts():
-                    if near_by_ghost.player != player and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
-                        cost += 8
-        for ghost in self.dungeon():
+                if ghost.player.colors_cleared.get(ghost.color) == 0:
+                    for near_by_ghost in self.ghosts:
+                        if near_by_ghost.player != player and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
+                            cost += 8
+        for ghost in self.dungeon:
             if ghost.player == player:
                 cost += 1
 
