@@ -333,7 +333,7 @@ class Game:
                     else:
                         total += abs(ghost.index.x - self.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - self.board[BP_Y][BP_X].index.y)
 
-        for ghost in self.dungeon():
+        for ghost in self.dungeon.ghosts:
             if ghost.player == player:
                 if ghost.color == 'red' and player.colors_cleared.get('red') == 0:
                     total += 8
@@ -355,7 +355,7 @@ class Game:
                     for near_by_ghost in self.ghosts:
                         if near_by_ghost.player != player and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
                             cost += 8
-        for ghost in self.dungeon:
+        for ghost in self.dungeon.ghosts:
             if ghost.player == player:
                 cost += 1
 
