@@ -32,6 +32,12 @@ def main():
                     game.chooseGhostTile(Position(x,y))
                 elif game.state == GameState.PLAYING:    #play
                     game.selectGhost(Position(x,y))
+                    if game.currGhost:
+                        print(game.currGhost.index.x, game.currGhost.index.y)
+                    for row in game.board:
+                        print("ROW---------------------")
+                        for col in row:
+                            print(col.full)
         screen.fill(COLOR_BACKGROUND)
         game.draw()
 

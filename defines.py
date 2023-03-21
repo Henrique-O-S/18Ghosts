@@ -41,6 +41,13 @@ YP_Y = 2
 BP_X = 2
 BP_Y = 4
 
+RS_X = 1
+RS_Y = 4
+BS_X = 0
+BS_Y = 0
+YS_X = 0
+YS_Y = 4
+
 
 fps = 60
 

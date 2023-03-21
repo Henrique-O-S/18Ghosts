@@ -5,8 +5,8 @@ from position import Position
 class Tile:
     def __init__(self, color, portal : Portal | int = 0):
         self.color = color
-        self.full = False
         self.portal = portal
+        self.full = False
     def __str__(self):
         return str(self.color) + " tile"
 

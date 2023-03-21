@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 
 from pygame import SurfaceType, Surface
@@ -91,13 +93,16 @@ class Game:
     def drawBoard(self):
         for row in range(self.dimension):
             for col in range(self.dimension):
-                if self.currGhost and self.currGhost.index.y == row and self.currGhost.index.x == col:
+                if self.currGhost and self.currGhost.index.y == row and self.currGhost.index.x == col and self.currGhost in self.ghosts:
                     self.board[row][col].draw(self.screen, True)
                 else:
                     self.board[row][col].draw(self.screen)
 
     def drawDungeon(self):
-        self.dungeon.draw(self.screen)
+        if self.currGhost and self.currGhost in self.dungeon.ghosts:
+            self.dungeon.draw(self.screen, self.currGhost.index)
+        else:
+            self.dungeon.draw(self.screen)
 
     def draw(self):
         self.drawPlayerTurn()
@@ -157,6 +162,7 @@ class Game:
     def clickInsideDungeon(self, click : Position):
         return click.x >= self.dungeon.dungeonCoords.x and click.x <= self.dungeon.dungeonCoords.x + 6 * TILEWIDTH and click.y >= self.dungeon.dungeonCoords.y and click.y <= self.dungeon.dungeonCoords.y + 3 * TILEHEIGHT
 
+
     def moveCurrGhost(self, index : Position):
         print(index.x, index.y)
         if index in self.possibleMoves(self.currGhost): # move is possible
@@ -167,6 +173,9 @@ class Game:
                         if self.ghosts[j].index == index: # going to this (another) ghost's tile
                             if self.ghosts[i].winsFight(self.ghosts[j]):
                                 print("ganhou")
+                                freeSpaceIndex = self.ghosts[i].index
+                                self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                                print(self.board[freeSpaceIndex.y][freeSpaceIndex.x].full)
                                 self.dungeon.addGhost(self.ghosts[j])
                                 self.ghosts[i].setIndexandPos(index, self.boardCoords)
                                 print("novo index attGhost", index.x, index.y)
@@ -183,7 +192,10 @@ class Game:
                                 return
                             else:
                                 print("perdeu")
+                                freeSpaceIndex = self.ghosts[i].index
                                 self.dungeon.addGhost(self.ghosts[i])
+                                self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                                print(self.board[freeSpaceIndex.y][freeSpaceIndex.x].full)
                                 if self.ghosts[i].color == "red":
                                     self.board[RP_Y][RP_X].portal.rotate()
                                 elif self.ghosts[i].color == "blue":
@@ -200,27 +212,74 @@ class Game:
             for i in range(len(self.ghosts)):
                 if self.ghosts[i] == self.currGhost:
                     print("vazio")
+                    freeSpaceIndex = self.ghosts[i].index
+                    self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                    print(self.board[freeSpaceIndex.y][freeSpaceIndex.x].full)
                     self.ghosts[i].setIndexandPos(index, self.boardCoords)
+                    self.board[index.y][index.x].full = True
                     print("novo index attGhost", self.ghosts[i].index.x, self.ghosts[i].index.y)
                     self.currGhost = 0
                     self.switchPlayers()
                     return
 
-    def selectGhost(self, click : Position):
+
+    def selectGhost(self, click: Position):
         if self.clickInsideBoard(click):
             ghostIndexes = self.coordsToIndexBoard(click)
-            if self.currGhost and self.currGhost.index == ghostIndexes: #clicked on selected ghost --> stop selecting it
+            if self.currGhost and self.currGhost.index == ghostIndexes and self.currGhost in self.ghosts:  # clicked on selected ghost in board--> stop selecting it
                 self.currGhost = 0
+                print("resetou currghost board")
                 return
+
             for ghost in self.ghosts:
-                if ghost.index == ghostIndexes: # ghost that player clicked
-                    if self.currGhost: # if another one is selected
-                        self.moveCurrGhost(ghost.index)
+                if ghost.index == ghostIndexes:  # board ghost that player clicked
+                    if self.currGhost:  # if another one in board is selected
+                        print("entrou board")
+                        if self.currGhost in self.ghosts:
+                            self.moveCurrGhost(ghost.index)
                     elif ghost.player == self.currPlayer:
                         self.currGhost = ghost
+                        print("pickou curr ghost board")
+
+                        return
+
+            if self.currGhost:
+                self.moveCurrGhost(ghostIndexes)
+
+
+        elif self.clickInsideDungeon(click):
+            ghostIndexes = self.coordsToIndexDungeon(click)
+            if self.currGhost and self.currGhost.index == ghostIndexes and self.currGhost in self.dungeon.ghosts:  # clicked on selected ghost in dungeon --> stop selecting it
+                self.currGhost = 0
+                print("resetou currghost dungeon")
+                return
+            for ghost in self.dungeon.ghosts:
+                if ghost.index == ghostIndexes and ghost.player == self.currPlayer:
+                    self.currGhost = ghost
+                    print("entrou dungeon")
+                    self.saveCurrGhost()
                     return
-            self.moveCurrGhost(ghostIndexes)
-            self.ghostEscape()
+        self.ghostEscape()
+
+    def saveCurrGhost(self):
+        if(self.currGhost.color == "red"):
+            newIndex = Position(RS_X, RS_Y)
+        elif(self.currGhost.color == "blue"):
+            newIndex = Position(BS_X, BS_Y)
+        else:
+            newIndex = Position(YS_X, YS_Y)
+
+        tile = self.board[newIndex.y][newIndex.x]
+
+        if not tile.full:
+            print("salvei")
+            self.currGhost.setIndexandPos(newIndex, self.boardCoords)
+            self.ghosts.append(self.currGhost)
+            self.dungeon.removeGhost(self.currGhost)
+            tile.full = True
+            self.currGhost = 0
+            self.switchPlayers()
+
 
     def findGhostID(self, index : Position):
         for i in range(len(self.ghosts)):

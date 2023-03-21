@@ -25,10 +25,14 @@ class Dungeon:
         self.ghosts.remove(ghost)
         self.updateGhostPlace()
 
-    def draw(self, screen):
-        for row in self.tiles:
-            for tile in row:
-                tile.draw(screen)
+    def draw(self, screen, index : Position | int = 0):
+        for row in range(len(self.tiles)):
+            for col in range(len(self.tiles[row])):
+                if index and index.y == row and index.x == col:
+                    self.tiles[row][col].draw(screen, True)
+                else:
+                    self.tiles[row][col].draw(screen)
+
 
     def generateTiles(self):
         self.tiles = []
