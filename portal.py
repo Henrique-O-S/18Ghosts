@@ -1,25 +1,23 @@
 import pygame
-
 from defines import *
 from position import Position
-
 class Portal:
     def __init__(self, color):
         self.color = color
         self.setDirection()
+        self.loadImage()
 
     def __str__(self):
         return str(self.color) + " portal"
 
-    def setPos(self, coords : Position):
-        self.position = coords
+    def setPos(self, position : Position):
+        self.position = position
 
     def setIndex(self, index : Position):
         self.index = index
 
     def draw(self, screen):
-        image = pygame.transform.scale(pygame.image.load('images/portal/' + self.color + '/' + PORTAL_DIR.get(self.direction) + '.png').convert_alpha(), (90, 90))
-        screen.blit(image, (self.position.x, self.position.y))
+        screen.blit(self.image, (self.position.x, self.position.y))
 
     def setDirection(self):
         if self.color == "red":
@@ -31,3 +29,7 @@ class Portal:
 
     def rotate(self):
         self.direction = (self.direction + 1) % 4
+        self.loadImage()
+
+    def loadImage(self):
+        self.image = pygame.transform.scale(pygame.image.load('images/portal/' + self.color + '/' + PORTAL_DIR.get(self.direction) + '.png').convert_alpha(), (90, 90))
