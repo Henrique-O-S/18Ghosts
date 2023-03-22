@@ -30,24 +30,22 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     elif event.key == pygame.K_RETURN:
-                        if self.state.gameState == GameState.PLAYING:
-                            if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_random_move":
-                                self.player1_logic(self)
-                            elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_random_move":
-                                self.player2_logic(self)
-                            if self.state.checkWinner():
-                                running = False
+                        if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_random_move":
+                            self.player1_logic(self)
+                        elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_random_move":
+                            self.player2_logic(self)
+                        if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
+                            self.state.gameState = GameState.OVER
+                            running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
-                    if self.state.gameState == GameState.PICKING: #choose tile for ghost in initial phase
-                        self.chooseGhostTile(Position(x,y))
-                    elif self.state.gameState == GameState.PLAYING: #play
-                        if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_real_move":
-                            self.player1_logic(self, Position(x,y))
-                        elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_real_move":
-                            self.player2_logic(self, Position(x,y))
-                        if self.state.checkWinner():
-                            running = False
+                    if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_real_move":
+                        self.player1_logic(self, Position(x,y))
+                    elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_real_move":
+                        self.player2_logic(self, Position(x,y))
+                    if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
+                        self.state.gameState = GameState.OVER
+                        running = False
             self.screen.fill(COLOR_BACKGROUND)
             self.draw()
             pygame.display.flip()

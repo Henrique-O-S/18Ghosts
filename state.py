@@ -76,6 +76,18 @@ class State:
                     possible_moves.append(Position(new_col, new_row))
         return possible_moves
     
+    def possiblePlacements(self):
+        possible_placements = []
+        for row in range(self.dimension):
+            for col in range(self.dimension):
+                tile = self.board[row][col]
+                if not (tile.full or tile.portal):
+                    for ghost in self.ghosts:
+                        if not ghost.chosen:
+                            if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
+                                possible_placements.append(Position(col, row))
+        return possible_placements
+    
     def playerGhostIDs(self):
         return [i for i in range(len(self.ghosts)) if self.ghosts[i].player == self.currPlayer]
 
@@ -83,6 +95,21 @@ class State:
         state_copy = deepcopy(self)
         state_copy.currGhost = state_copy.ghosts[ghostID]
         state_copy.moveGhost(index)
+        return state_copy
+    
+    def place(self, index : Position):
+        state_copy = deepcopy(self)
+        tile = state_copy.board[index.y][index.x]
+        if index in state_copy.possiblePlacements():
+            for ghost in state_copy.ghosts:
+                if not ghost.chosen:
+                    if compareGhostTileColor(ghost, tile) and ghost.player == state_copy.currPlayer:
+                        tile.full = True
+                        ghost.setIndex(Position(index.x, index.y))
+                        ghost.placed = True
+                        state_copy.switchPlayers()
+                        state_copy.updateState()
+                        break
         return state_copy
     
     def checkTile(self, ghost: Ghost, new_row, new_col):

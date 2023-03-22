@@ -65,12 +65,19 @@ def play_evaluation(state : State):
     return cost
 
 def execute_real_move(game : Game, pos : Position):
-    game.selectGhost(pos)
+    if game.state.gameState == GameState.PLAYING:
+        game.selectGhost(pos)
+    elif game.state.gameState == GameState.PICKING:
+        game.chooseGhostTile(pos)
 
 def execute_random_move(game : Game):
-    id = random.choice(game.state.playerGhostIDs())
-    move = random.choice(game.state.possibleMoves(game.state.ghosts[id]))
-    game.state = game.state.move(id, move)
+    if game.state.gameState == GameState.PLAYING:
+        id = random.choice(game.state.playerGhostIDs())
+        move = random.choice(game.state.possibleMoves(game.state.ghosts[id]))
+        game.state = game.state.move(id, move)
+    elif game.state.gameState == GameState.PICKING:
+        index = random.choice(game.state.possiblePlacements())
+        game.state = game.state.place(index)
 
 def execute_minimax_move(evaluate_func, depth):
     return True
