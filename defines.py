@@ -1,12 +1,9 @@
 from enum import Enum
 
-
-
 class Color(Enum):
     RED = 1
     BLUE = 2
     YELLOW = 3
-
 
 class PlayerType(Enum):
     PLAYER = 1
@@ -47,7 +44,6 @@ BS_X = 0
 BS_Y = 0
 YS_X = 0
 YS_Y = 4
-
 
 fps = 60
 
