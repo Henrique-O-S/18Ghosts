@@ -1,21 +1,18 @@
-import pygame
 from defines import *
 from ghost import Ghost
 from position import Position
 from tile import Tile
 
-
 class Dungeon:
-    def __init__(self, position: Position):
+    def __init__(self):
         self.ghosts = []
-        self.dungeonCoords = position
         self.generateTiles()
 
     def updateGhostPlace(self):
         for i in range(len(self.ghosts)):
             row = i // 6
             col = i % 6
-            self.ghosts[i].setIndexandPos(Position(col, row), self.dungeonCoords)
+            self.ghosts[i].setIndex(Position(col, row))
 
     def addGhost(self, ghost: Ghost):
         self.ghosts.append(ghost)
@@ -33,14 +30,11 @@ class Dungeon:
                 else:
                     self.tiles[row][col].draw(screen)
 
-
     def generateTiles(self):
         self.tiles = []
-        for i in range(3):
+        for _ in range(3):
             tileRow = []
-            for j in range(6):
+            for _ in range(6):
                 tile = Tile(COLOR_DUNGEON_TILE)
-                tile.setPos(
-                    Position(self.dungeonCoords.x + j * TILEWIDTH, self.dungeonCoords.y + i * TILEHEIGHT))
                 tileRow.append(tile)
             self.tiles.append(tileRow)
