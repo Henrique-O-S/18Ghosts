@@ -130,6 +130,7 @@ class State:
                                 freeSpaceIndex = self.ghosts[i].index
                                 self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
                                 self.dungeon.addGhost(self.ghosts[j])
+                                self.dungeon.ghosts[-1].dead = True
                                 self.ghosts[i].setIndex(index)
                                 self.currGhost = 0
                                 if self.ghosts[j].color == "red":
@@ -145,6 +146,7 @@ class State:
                             else:
                                 freeSpaceIndex = self.ghosts[i].index
                                 self.dungeon.addGhost(self.ghosts[i])
+                                self.dungeon.ghosts[-1].dead = True
                                 self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
                                 if self.ghosts[i].color == "red":
                                     self.board[RP_Y][RP_X].portal.rotate()

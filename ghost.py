@@ -8,9 +8,10 @@ class Ghost:
         self.color = color
         self.player = player
         self.placed = False
+        self.dead = False
 
     def __eq__(self, other):
-        return self.color == other.color and self.player == other.player and self.index == other.index and self.position == other.position
+        return self.color == other.color and self.player == other.player and self.index == other.index and self.dead == other.dead
     
     def __str__(self):
         return "player = " + str(self.player) + " | color = " + str(self.color)
