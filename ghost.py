@@ -11,7 +11,7 @@ class Ghost:
         self.placed = False
 
     def __eq__(self, other):
-        return self.color == other.color and self.player == other.player and self.index == other.index and self.position == other.position
+        return self.color == other.color and self.player == other.player and self.index == other.index
     
     def __str__(self):
         return "player = " + str(self.player) + " | color = " + str(self.color)

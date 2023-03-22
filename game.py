@@ -4,6 +4,7 @@ from pygame import Surface, SurfaceType
 from defines import *
 from state import State
 from position import Position
+from logic import *
 
 class Game:
     def __init__(self, player1_logic, player2_logic, screen : Surface | SurfaceType, font):
@@ -30,10 +31,16 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     elif event.key == pygame.K_RETURN:
-                        if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_random_move":
-                            self.player1_logic(self)
-                        elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_random_move":
-                            self.player2_logic(self)
+                        if self.state.currPlayer.name == "Player 1":
+                            if self.player1_logic.__name__ == "execute_random_move":
+                                self.player1_logic(self)
+                            elif self.player1_logic.__name__ == "execute_minimax_move":
+                                self.player1_logic(self, evaluate, 2)
+                        elif self.state.currPlayer.name == "Player 2":
+                            if self.player2_logic.__name__ == "execute_random_move":
+                                self.player2_logic(self)
+                            elif self.player2_logic.__name__ == "execute_minimax_move":
+                                self.player2_logic(self, evaluate, 2)
                         if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                             self.state.gameState = GameState.OVER
                             running = False
