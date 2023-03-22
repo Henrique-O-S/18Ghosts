@@ -68,9 +68,9 @@ def execute_real_move(game : Game, pos : Position):
     game.selectGhost(pos)
 
 def execute_random_move(game : Game):
-    ghost = random.choice(game.state.playerGhosts())
-    move = random.choice(game.state.possibleMoves(ghost))
-    game.state = game.state.move(ghost, move)
+    id = random.choice(game.state.playerGhostIDs())
+    move = random.choice(game.state.possibleMoves(game.state.ghosts[id]))
+    game.state = game.state.move(id, move)
 
 def execute_minimax_move(evaluate_func, depth):
     return True

@@ -76,12 +76,12 @@ class State:
                     possible_moves.append(Position(new_col, new_row))
         return possible_moves
     
-    def playerGhosts(self):
-        return [ghost for ghost in self.ghosts if ghost.player == self.currPlayer]
+    def playerGhostIDs(self):
+        return [i for i in range(len(self.ghosts)) if self.ghosts[i].player == self.currPlayer]
 
-    def move(self, ghost : Ghost, index : Position):
+    def move(self, ghostID, index : Position):
         state_copy = deepcopy(self)
-        state_copy.currGhost = ghost
+        state_copy.currGhost = state_copy.ghosts[ghostID]
         state_copy.moveGhost(index)
         return state_copy
     
