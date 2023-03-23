@@ -92,7 +92,7 @@ def execute_minimax_move(game, evaluate_func, depth):
     alpha = -100
     beta = 100
     maximizing = True  # The top-level call to minimax is always a maximization step
-    best_value = float('-inf')
+    best_value = -100
     best_state = None
     if game.state.gameState == GameState.PLAYING:
         for id in game.state.possibleRespawns():
