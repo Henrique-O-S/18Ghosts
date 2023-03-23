@@ -1,4 +1,5 @@
 import random
+import math
 
 from defines import *
 
@@ -62,7 +63,8 @@ def evaluate(state):
         for ghost in state.dungeon.ghosts:
             if ghost.player == state.currPlayer:
                 cost += 1
-    return cost
+    value = 100 - cost
+    return value
 
 def execute_real_move(game, pos):
     if game.state.gameState == GameState.PLAYING:
@@ -72,6 +74,13 @@ def execute_real_move(game, pos):
 
 def execute_random_move(game):
     if game.state.gameState == GameState.PLAYING:
+        respawns = game.state.possibleRespawns()
+        if respawns:
+            option = random.randint(1, 2)
+            if option == 1:
+                id = random.choice(game.state.possibleRespawns())
+                game.state = game.state.respawn(id)
+                return
         id = random.choice(game.state.playerGhostIDs())
         move = random.choice(game.state.possibleMoves(game.state.ghosts[id]))
         game.state = game.state.move(id, move)
@@ -80,8 +89,8 @@ def execute_random_move(game):
         game.state = game.state.place(index)
 
 def execute_minimax_move(game, evaluate_func, depth):
-    alpha = float('-inf')
-    beta = float('inf')
+    alpha = -100
+    beta = 100
     maximizing = True  # The top-level call to minimax is always a maximization step
     best_value = float('-inf')
     best_state = None
@@ -121,20 +130,21 @@ def minimax(state, depth, alpha, beta, maximizing, evaluate_func):
     # Iterate over all possible actions
     if state.gameState == GameState.PLAYING:
         for id in range(len(state.ghosts)):
-            for move in state.possibleMoves(state.ghosts[id]):
-                # Calculate the value of the resulting state after taking this action
-                new_state = state.move(id, move)
-                new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
-                # Update best_value and alpha/beta based on whether we're maximizing or minimizing
-                if maximizing:
-                    best_value = max(best_value, new_value)
-                    alpha = max(alpha, best_value)
-                else:
-                    best_value = min(best_value, new_value)
-                    beta = min(beta, best_value)
-                # Alpha-beta pruning: if alpha >= beta, prune the rest of the subtree
-                if alpha >= beta:
-                    break
+            if state.ghosts[id].player == state.currPlayer:
+                for move in state.possibleMoves(state.ghosts[id]):
+                    # Calculate the value of the resulting state after taking this action
+                    new_state = state.move(id, move)
+                    new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+                    # Update best_value and alpha/beta based on whether we're maximizing or minimizing
+                    if maximizing:
+                        best_value = max(best_value, new_value)
+                        alpha = max(alpha, best_value)
+                    else:
+                        best_value = min(best_value, new_value)
+                        beta = min(beta, best_value)
+                    # Alpha-beta pruning: if alpha >= beta, prune the rest of the subtree
+                    if alpha >= beta:
+                        break
     elif state.gameState == GameState.PICKING:
         for index in state.possiblePlacements():
             # Calculate the value of the resulting state after taking this action

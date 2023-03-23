@@ -76,6 +76,17 @@ class State:
                     possible_moves.append(Position(new_col, new_row))
         return possible_moves
     
+    def possibleRespawns(self):
+        respawnGhostIDs = []
+        for id in range(len(self.dungeon.ghosts)):
+            if self.dungeon.ghosts[id].player == self.currPlayer:
+                freeRed = self.dungeon.ghosts[id].color == "red" and not self.board[RS_Y][RS_X].full
+                freeBlue = self.dungeon.ghosts[id].color == "blue" and not self.board[BS_Y][BS_X].full
+                freeYellow = self.dungeon.ghosts[id].color == "yellow" and not self.board[YS_Y][YS_X].full
+                if freeRed or freeBlue or freeYellow:
+                    respawnGhostIDs.append(id)
+        return respawnGhostIDs
+
     def possiblePlacements(self):
         possible_placements = []
         for row in range(self.dimension):
@@ -95,6 +106,12 @@ class State:
         state_copy = deepcopy(self)
         state_copy.currGhost = state_copy.ghosts[ghostID]
         state_copy.moveGhost(index)
+        return state_copy
+    
+    def respawn(self, ghostID):
+        state_copy = deepcopy(self)
+        state_copy.currGhost = state_copy.dungeon.ghosts[ghostID]
+        state_copy.saveGhost()
         return state_copy
     
     def place(self, index : Position):
