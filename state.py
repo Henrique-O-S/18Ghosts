@@ -55,16 +55,46 @@ class State:
             self.gameState = GameState.PLAYING
 
     def checkWinner(self):
-        victory = True
+        victory_1 = True
+        victory_2 = True
         for color in self.player1.colors_cleared:
             if self.player1.colors_cleared[color] == 0:
-                victory = False
-        if victory:
+                victory_1 = False
+        if victory_1:
+            print('Player 1 Wins')
             return True
         for color in self.player2.colors_cleared:
             if self.player2.colors_cleared[color] == 0:
-                victory = False
-        return victory
+                victory_2 = False
+        if victory_2:
+            print('Player 2 Wins')
+            return True
+        move = False
+        for id in self.playerGhostIDs():
+            if self.possibleMoves(self.ghosts[id]):
+                move = True
+        if (not move) and (not self.possibleRespawns()):
+            if self.currPlayer.name == 'Player 1':
+                victory_2 = True
+                print('Player 2 Wins')
+            else:
+                victory_1 = True
+                print('Player 1 Wins')
+            return True
+        self.switchPlayers()
+        move = False
+        for id in self.playerGhostIDs():
+            if self.possibleMoves(self.ghosts[id]):
+                move = True
+        if (not move) and (not self.possibleRespawns()):
+            if self.currPlayer.name == 'Player 2':
+                victory_1 = True
+                print('Player 1 Wins')
+            else:
+                victory_2 = True
+                print('Player 2 Wins')
+        self.switchPlayers()
+        return victory_1 or victory_2
 
     def possibleMoves(self, ghost : Ghost):
         row, col = ghost.index.y, ghost.index.x

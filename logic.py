@@ -76,14 +76,17 @@ def execute_random_move(game):
     if game.state.gameState == GameState.PLAYING:
         respawns = game.state.possibleRespawns()
         if respawns:
-            option = random.randint(1, 2)
-            if option == 1:
-                id = random.choice(game.state.possibleRespawns())
-                game.state = game.state.respawn(id)
+            id = random.choice(game.state.possibleRespawns())
+            game.state = game.state.respawn(id)
+            return
+        playerGhosts = game.state.playerGhostIDs()
+        if playerGhosts:
+            id = random.choice(playerGhosts)
+            moves = game.state.possibleMoves(game.state.ghosts[id])
+            if moves:
+                move = random.choice(moves)
+                game.state = game.state.move(id, move)
                 return
-        id = random.choice(game.state.playerGhostIDs())
-        move = random.choice(game.state.possibleMoves(game.state.ghosts[id]))
-        game.state = game.state.move(id, move)
     elif game.state.gameState == GameState.PICKING:
         index = random.choice(game.state.possiblePlacements())
         game.state = game.state.place(index)
@@ -129,7 +132,7 @@ def execute_minimax_move(game, evaluate_func, depth):
 
 def minimax(state, depth, alpha, beta, maximizing, evaluate_func):
     # Base case: return the evaluation of the state if it's a leaf node or max depth is reached
-    if depth == 0 or state.checkWinner():
+    if depth == 0 or (state.gameState == GameState.PLAYING and state.checkWinner()):
         return evaluate_func(state)        
     # Initialize best_value based on whether we're maximizing or minimizing
     if maximizing:
