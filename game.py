@@ -34,9 +34,9 @@ class Game:
                     self.player2_logic(self)
                 elif self.player2_logic.__name__ == "execute_minimax_move":
                     self.player2_logic(self, evaluate, 2)
-                running = False
             if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                 self.state.gameState = GameState.OVER
+                running = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
