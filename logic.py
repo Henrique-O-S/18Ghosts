@@ -95,6 +95,15 @@ def execute_minimax_move(game, evaluate_func, depth):
     best_value = float('-inf')
     best_state = None
     if game.state.gameState == GameState.PLAYING:
+        for id in game.state.possibleRespawns():
+            new_state = game.state.respawn(id)
+            new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+            if new_value > best_value:
+                best_value = new_value
+                best_state = new_state
+            alpha = max(alpha, best_value)
+            if beta <= alpha:
+                break
         for id in range(len(game.state.ghosts)):
             if game.state.ghosts[id].player == game.state.currPlayer:
                 for move in game.state.possibleMoves(game.state.ghosts[id]):
@@ -129,6 +138,20 @@ def minimax(state, depth, alpha, beta, maximizing, evaluate_func):
         best_value = float('inf')
     # Iterate over all possible actions
     if state.gameState == GameState.PLAYING:
+        for id in state.possibleRespawns():
+            # Calculate the value of the resulting state after taking this action
+            new_state = state.respawn(id)
+            new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+            # Update best_value and alpha/beta based on whether we're maximizing or minimizing
+            if maximizing:
+                best_value = max(best_value, new_value)
+                alpha = max(alpha, best_value)
+            else:
+                best_value = min(best_value, new_value)
+                beta = min(beta, best_value)
+            # Alpha-beta pruning: if alpha >= beta, prune the rest of the subtree
+            if alpha >= beta:
+                break
         for id in range(len(state.ghosts)):
             if state.ghosts[id].player == state.currPlayer:
                 for move in state.possibleMoves(state.ghosts[id]):
