@@ -87,15 +87,16 @@ def execute_minimax_move(game, evaluate_func, depth):
     best_state = None
     if game.state.gameState == GameState.PLAYING:
         for id in range(len(game.state.ghosts)):
-            for move in game.state.possibleMoves(game.state.ghosts[id]):
-                new_state = game.state.move(id, move)
-                new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
-                if new_value > best_value:
-                    best_value = new_value
-                    best_state = new_state
-                alpha = max(alpha, best_value)
-                if beta <= alpha:
-                    break
+            if game.state.ghosts[id].player == game.state.currPlayer:
+                for move in game.state.possibleMoves(game.state.ghosts[id]):
+                    new_state = game.state.move(id, move)
+                    new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+                    if new_value > best_value:
+                        best_value = new_value
+                        best_state = new_state
+                    alpha = max(alpha, best_value)
+                    if beta <= alpha:
+                        break
     elif game.state.gameState == GameState.PICKING:
         for index in game.state.possiblePlacements():
             new_state = game.state.place(index)
