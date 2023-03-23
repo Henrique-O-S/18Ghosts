@@ -63,7 +63,7 @@ def evaluate(state):
         for ghost in state.dungeon.ghosts:
             if ghost.player == state.currPlayer:
                 cost += 1
-    value = 100 - cost
+    value = 1000 - cost
     return value
 
 def execute_real_move(game, pos):
