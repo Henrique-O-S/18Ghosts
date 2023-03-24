@@ -28,12 +28,12 @@ class Game:
                 if self.player1_logic.__name__ == "execute_random_move":
                     self.player1_logic(self)
                 elif self.player1_logic.__name__ == "execute_minimax_move":
-                    self.player1_logic(self, evaluate, 2)
+                    self.player1_logic(self, evaluate, PLAYER_1_DEPTH)
             elif self.state.currPlayer.name == "Player 2":
                 if self.player2_logic.__name__ == "execute_random_move":
                     self.player2_logic(self)
                 elif self.player2_logic.__name__ == "execute_minimax_move":
-                    self.player2_logic(self, evaluate, 2)
+                    self.player2_logic(self, evaluate, PLAYER_2_DEPTH)
             if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                 self.state.gameState = GameState.OVER
                 running = False
