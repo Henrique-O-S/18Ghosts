@@ -2,6 +2,8 @@ import random
 import math
 
 from defines import *
+from position import Position
+
 
 def manhattan_distances(state):
     # returns the sum of manhattan distances from ghosts to their respective exits
@@ -10,31 +12,76 @@ def manhattan_distances(state):
         if ghost.player == state.currPlayer:
             if ghost.color == 'red' and state.currPlayer.colors_cleared.get('red') == 0:
                 if state.board[RP_Y][RP_X].portal.direction == 0:
-                    total += abs(ghost.index.x - state.board[RP_Y][RP_X].index.x + 1) + abs(ghost.index.y - state.board[RP_Y][RP_X].index.y)
+                    if ghost.index == Position(1, 0):
+                        total += 5
+                    elif ghost.index == Position(0, 0):
+                        total += 6
+                    else:
+                        total += abs(ghost.index.x - RP_X + 1) + abs(ghost.index.y - RP_Y) + 1
                 elif state.board[RP_Y][RP_X].portal.direction == 1:
-                    total += abs(ghost.index.x - state.board[RP_Y][RP_X].index.x + 1) + abs(ghost.index.y - state.board[RP_Y][RP_X].index.y)
+                    if ghost.index == Position(1, 0):
+                        total += 4
+                    elif ghost.index == Position(0, 0):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - RP_X + 1) + abs(ghost.index.y - RP_Y)
                 elif state.board[RP_Y][RP_X].portal.direction == 2:
-                    total += abs(ghost.index.x - state.board[RP_Y][RP_X].index.x) + abs(ghost.index.y - state.board[RP_Y][RP_X].index.y + 1)
+                    total += abs(ghost.index.x - RP_X) + abs(ghost.index.y - RP_Y + 1)
                 else:
-                    total += abs(ghost.index.x - state.board[RP_Y][RP_X].index.x - 1) + abs(ghost.index.y - state.board[RP_Y][RP_X].index.y)
+                    if ghost.index == Position(3, 0):
+                        total += 4
+                    elif ghost.index == Position(4, 0):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - RP_X - 1) + abs(ghost.index.y - RP_Y)
             elif ghost.color == 'yellow' and state.currPlayer.colors_cleared.get('yellow') == 0:
                 if state.board[YP_Y][YP_X].portal.direction == 0:
-                    total += abs(ghost.index.x - state.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - state.board[YP_Y][YP_X].index.y - 1)
+                    if ghost.index == Position(4, 3):
+                        total += 4
+                    elif ghost.index == Position(4, 4):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y - 1)
                 elif state.board[YP_Y][YP_X].portal.direction == 1:
-                    total += abs(ghost.index.x - state.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - state.board[YP_Y][YP_X].index.y + 1)
+                    if ghost.index == Position(4, 1):
+                        total += 5
+                    elif ghost.index == Position(4, 0):
+                        total += 6
+                    else:
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y + 1) + 1
                 elif state.board[YP_Y][YP_X].portal.direction == 2:
-                    total += abs(ghost.index.x - state.board[YP_Y][YP_X].index.x) + abs(ghost.index.y - state.board[YP_Y][YP_X].index.y + 1)
+                    if ghost.index == Position(4, 1):
+                        total += 4
+                    elif ghost.index == Position(4, 0):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y + 1)
                 else:
-                    total += abs(ghost.index.x - state.board[YP_Y][YP_X].index.x - 1) + abs(ghost.index.y - state.board[YP_Y][YP_X].index.y)
+                    total += abs(ghost.index.x - YP_X - 1) + abs(ghost.index.y - YP_Y)
             elif ghost.color == 'blue' and state.currPlayer.colors_cleared.get('blue') == 0:
                 if state.board[BP_Y][BP_X].portal.direction == 0:
-                    total += abs(ghost.index.x - state.board[BP_Y][BP_X].index.x) + abs(ghost.index.y - state.board[BP_Y][BP_X].index.y - 1)
+                    total += abs(ghost.index.x - BP_X) + abs(ghost.index.y - BP_Y - 1)
                 elif state.board[BP_Y][BP_X].portal.direction == 1:
-                    total += abs(ghost.index.x - state.board[BP_Y][BP_X].index.x + 1) + abs(ghost.index.y - state.board[BP_Y][BP_X].index.y)
+                    if ghost.index == Position(1, 4):
+                        total += 4
+                    elif ghost.index == Position(0, 4):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - BP_X + 1) + abs(ghost.index.y - BP_Y)
                 elif state.board[BP_Y][BP_X].portal.direction == 2:
-                    total += abs(ghost.index.x - state.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - state.board[BP_Y][BP_X].index.y)
+                    if ghost.index == Position(3, 4):
+                        total += 5
+                    elif ghost.index == Position(4, 4):
+                        total += 6
+                    else:
+                        total += abs(ghost.index.x - BP_X - 1) + abs(ghost.index.y - BP_Y) + 1
                 else:
-                    total += abs(ghost.index.x - state.board[BP_Y][BP_X].index.x - 1) + abs(ghost.index.y - state.board[BP_Y][BP_X].index.y)
+                    if ghost.index == Position(3, 4):
+                        total += 4
+                    elif ghost.index == Position(4, 4):
+                        total += 5
+                    else:
+                        total += abs(ghost.index.x - BP_X - 1) + abs(ghost.index.y - BP_Y)
     for ghost in state.dungeon.ghosts:
         if ghost.player == state.currPlayer:
             if ghost.color == 'red' and state.currPlayer.colors_cleared.get('red') == 0:
@@ -54,12 +101,12 @@ def evaluate(state):
         for ghost in state.ghosts:
             if ghost.player != state.currPlayer:
                 cost += 1
-            elif ghost.player == state.currPlayer:
-                cost += 1
-                if ghost.player.colors_cleared.get(ghost.color) == 0:
-                    for near_by_ghost in state.ghosts:
-                        if near_by_ghost.player != state.currPlayer and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
-                            cost += 8
+            #elif ghost.player == state.currPlayer:
+                #cost += 1
+                #if ghost.player.colors_cleared.get(ghost.color) == 0:
+                    #for near_by_ghost in state.ghosts:
+                        #if near_by_ghost.player != state.currPlayer and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
+                            #cost += 8
         for ghost in state.dungeon.ghosts:
             if ghost.player == state.currPlayer:
                 cost += 1
@@ -98,20 +145,30 @@ def execute_minimax_move(game, evaluate_func, depth):
     best_value = -100
     best_state = None
     if game.state.gameState == GameState.PLAYING:
+        #print("Respawn moves:")
         for id in game.state.possibleRespawns():
             new_state = game.state.respawn(id)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+            #print("Minimax result:")
+            #print(new_value)
+            #print("Direct heuristic result:")
+            #print(evaluate(new_state))
             if new_value > best_value:
                 best_value = new_value
                 best_state = new_state
             alpha = max(alpha, best_value)
             if beta <= alpha:
                 break
+        #print("Regular moves:")
         for id in range(len(game.state.ghosts)):
             if game.state.ghosts[id].player == game.state.currPlayer:
                 for move in game.state.possibleMoves(game.state.ghosts[id]):
                     new_state = game.state.move(id, move)
                     new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+                    #print("Minimax result:")
+                    #print(new_value)
+                    #print("Direct heuristic result:")
+                    #print(evaluate(new_state))
                     if new_value > best_value:
                         best_value = new_value
                         best_state = new_state
@@ -119,9 +176,14 @@ def execute_minimax_move(game, evaluate_func, depth):
                     if beta <= alpha:
                         break
     elif game.state.gameState == GameState.PICKING:
+        #print("Picking moves:")
         for index in game.state.possiblePlacements():
             new_state = game.state.place(index)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_func)
+            #print("Minimax result:")
+            #print(new_value)
+            #print("Direct heuristic result:")
+            #print(evaluate(new_state))
             if new_value > best_value:
                 best_value = new_value
                 best_state = new_state
@@ -129,6 +191,8 @@ def execute_minimax_move(game, evaluate_func, depth):
             if beta <= alpha:
                 break
     game.state = best_state
+    #print("Best state:")
+    #print(evaluate(best_state))
 
 def minimax(state, depth, alpha, beta, maximizing, evaluate_func):
     # Base case: return the evaluation of the state if it's a leaf node or max depth is reached
