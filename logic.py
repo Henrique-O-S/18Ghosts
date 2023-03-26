@@ -16,23 +16,25 @@ def manhattan_distances(state):
                     elif ghost.index == Position(0, 0):
                         total += 6
                     else:
-                        total += abs(ghost.index.x - RP_X + 1) + abs(ghost.index.y - RP_Y) + 1
+                        total += abs(ghost.index.x - (RP_X + 1)) + abs(ghost.index.y - RP_Y) + 1
                 elif state.board[RP_Y][RP_X].portal.direction == 1:
                     if ghost.index == Position(1, 0):
                         total += 4
                     elif ghost.index == Position(0, 0):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - RP_X + 1) + abs(ghost.index.y - RP_Y)
+                        total += abs(ghost.index.x - (RP_X + 1)) + abs(ghost.index.y - RP_Y)
                 elif state.board[RP_Y][RP_X].portal.direction == 2:
-                    total += abs(ghost.index.x - RP_X) + abs(ghost.index.y - RP_Y + 1)
+                    total += abs(ghost.index.x - RP_X) + abs(ghost.index.y - (RP_Y + 1))
                 else:
                     if ghost.index == Position(3, 0):
                         total += 4
                     elif ghost.index == Position(4, 0):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - RP_X - 1) + abs(ghost.index.y - RP_Y)
+                        print(ghost.index.x)
+                        print(ghost.index.y)
+                        total += abs(ghost.index.x - (RP_X - 1)) + abs(ghost.index.y - RP_Y)
             elif ghost.color == 'yellow' and state.currPlayer.colors_cleared.get('yellow') == 0:
                 if state.board[YP_Y][YP_X].portal.direction == 0:
                     if ghost.index == Position(4, 3):
@@ -40,47 +42,51 @@ def manhattan_distances(state):
                     elif ghost.index == Position(4, 4):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y - 1)
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - (YP_Y - 1))
                 elif state.board[YP_Y][YP_X].portal.direction == 1:
                     if ghost.index == Position(4, 1):
                         total += 5
                     elif ghost.index == Position(4, 0):
                         total += 6
                     else:
-                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y + 1) + 1
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - (YP_Y + 1)) + 1
                 elif state.board[YP_Y][YP_X].portal.direction == 2:
                     if ghost.index == Position(4, 1):
                         total += 4
                     elif ghost.index == Position(4, 0):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - YP_Y + 1)
+                        total += abs(ghost.index.x - YP_X) + abs(ghost.index.y - (YP_Y + 1))
                 else:
-                    total += abs(ghost.index.x - YP_X - 1) + abs(ghost.index.y - YP_Y)
+                    total += abs(ghost.index.x - (YP_X - 1)) + abs(ghost.index.y - YP_Y)
             elif ghost.color == 'blue' and state.currPlayer.colors_cleared.get('blue') == 0:
                 if state.board[BP_Y][BP_X].portal.direction == 0:
-                    total += abs(ghost.index.x - BP_X) + abs(ghost.index.y - BP_Y - 1)
+                    total += abs(ghost.index.x - BP_X) + abs(ghost.index.y - (BP_Y - 1))
                 elif state.board[BP_Y][BP_X].portal.direction == 1:
                     if ghost.index == Position(1, 4):
                         total += 4
                     elif ghost.index == Position(0, 4):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - BP_X + 1) + abs(ghost.index.y - BP_Y)
+                        total += abs(ghost.index.x - (BP_X + 1)) + abs(ghost.index.y - BP_Y)
                 elif state.board[BP_Y][BP_X].portal.direction == 2:
                     if ghost.index == Position(3, 4):
                         total += 5
                     elif ghost.index == Position(4, 4):
                         total += 6
                     else:
-                        total += abs(ghost.index.x - BP_X - 1) + abs(ghost.index.y - BP_Y) + 1
+                        print(ghost.index.x)
+                        print(ghost.index.y)
+                        total += abs(ghost.index.x - (BP_X - 1)) + abs(ghost.index.y - BP_Y) + 1
                 else:
                     if ghost.index == Position(3, 4):
                         total += 4
                     elif ghost.index == Position(4, 4):
                         total += 5
                     else:
-                        total += abs(ghost.index.x - BP_X - 1) + abs(ghost.index.y - BP_Y)
+                        total += abs(ghost.index.x - (BP_X - 1)) + abs(ghost.index.y - BP_Y)
+            print(ghost.color + ": ")
+            print(total)
     for ghost in state.dungeon.ghosts:
         if ghost.player == state.currPlayer:
             if ghost.color == 'red' and state.currPlayer.colors_cleared.get('red') == 0:
@@ -91,13 +97,18 @@ def manhattan_distances(state):
                 total += 8
     return total
 
-'''
+
 def evaluate(state):
+    print(state.currPlayer)
+    print(state.currPlayer.colors_cleared.get('red'))
+    print(state.currPlayer.colors_cleared.get('yellow'))
+    print(state.currPlayer.colors_cleared.get('blue'))
     cost = 1
     if state.gameState == GameState.PICKING:
         return cost
     else:
         cost = manhattan_distances(state)
+        print(cost)
         for ghost in state.ghosts:
             if ghost.player != state.currPlayer:
                 cost += 1
@@ -112,8 +123,9 @@ def evaluate(state):
                 cost += 1
     value = 1000 - cost
     return value
-'''
 
+
+'''
 def evaluate(state):
     if state.gameState == GameState.PICKING:
         return 0
@@ -123,6 +135,7 @@ def evaluate(state):
         return len(p2) - len(p1)
     else:
         return len(p1) - len(p2)
+'''
 
 def execute_real_move(game, pos):
     if game.state.gameState == GameState.PLAYING:
@@ -150,10 +163,10 @@ def execute_random_move(game):
         game.state = game.state.place(index)
 
 def execute_minimax_move(game, evaluate_func, depth):
-    alpha = float('-inf')
-    beta = float('inf')
+    alpha = -100
+    beta = 100
     maximizing = True  # The top-level call to minimax is always a maximization step
-    best_value = float('-inf')
+    best_value = -100
     best_state = None
     if game.state.gameState == GameState.PLAYING:
         #print("Respawn moves:")
