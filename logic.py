@@ -266,6 +266,8 @@ def UCB1(state):
 def treeTransversal(game, root):
     selectedState = root
     print("root children", len(root.children))
+    for a in root.children:
+        print(UCB1(a))
     #selectedState = max(game.state.children, key=UCB1)
     if game.state.gameState == GameState.PICKING:
         print("entrou aqui")
@@ -273,6 +275,8 @@ def treeTransversal(game, root):
             print("ciclo")
             selectedState = max(selectedState.children, key=UCB1)
             print("selected children", len(selectedState.children))
+            for a in selectedState.children:
+                print("sel", UCB1(a))
         return selectedState
 
 def simulation(game, evaluate_func):
@@ -337,8 +341,9 @@ def mcts(game, evaluate_func, nIterations):
         else:
             print("else")
             print("invocou expand")
-
+            a = game.state
             expandNode(game)
+            game.state = a
             print("deu exapand")
             print("invocou transversal")
 
@@ -350,6 +355,8 @@ def mcts(game, evaluate_func, nIterations):
             game.state = a
             print("end else")
 
-
+    print("root", root.n, root.t)
+    for a in root.children:
+        print(UCB1(a), a.t, a.n)
     selectedState = max(root.children, key=UCB1)
     game.state = selectedState #executed move with best eval
