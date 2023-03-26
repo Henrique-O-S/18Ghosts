@@ -228,6 +228,7 @@ class State:
         if not tile.full:
             self.currGhost.setIndex(newIndex)
             self.ghosts.append(self.currGhost)
+            self.ghosts[-1].dead = False
             self.dungeon.removeGhost(self.currGhost)
             tile.full = True
             self.currGhost = 0

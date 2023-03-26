@@ -24,25 +24,26 @@ class Game:
         timer = pygame.time.Clock()
         running = True
         while running:
-            if self.state.currPlayer.name == "Player 1":
-                if self.player1_logic.__name__ == "execute_random_move":
-                    self.player1_logic(self)
-                elif self.player1_logic.__name__ == "execute_minimax_move":
-                    self.player1_logic(self, evaluate, PLAYER_1_DEPTH)
-            elif self.state.currPlayer.name == "Player 2":
-                if self.player2_logic.__name__ == "execute_random_move":
-                    self.player2_logic(self)
-                elif self.player2_logic.__name__ == "execute_minimax_move":
-                    self.player2_logic(self, evaluate, PLAYER_2_DEPTH)
-            if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
-                self.state.gameState = GameState.OVER
-                running = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.KEYDOWN: # CLOSE WITH ESC KEY
                     if event.key == pygame.K_ESCAPE:
                         running = False
+                    elif event.key == pygame.K_RETURN:
+                        if self.state.currPlayer.name == "Player 1":
+                            if self.player1_logic.__name__ == "execute_random_move":
+                                self.player1_logic(self)
+                            elif self.player1_logic.__name__ == "execute_minimax_move":
+                                self.player1_logic(self, evaluate, PLAYER_1_DEPTH)
+                        elif self.state.currPlayer.name == "Player 2":
+                            if self.player2_logic.__name__ == "execute_random_move":
+                                self.player2_logic(self)
+                            elif self.player2_logic.__name__ == "execute_minimax_move":
+                                self.player2_logic(self, evaluate, PLAYER_2_DEPTH)
+                        if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
+                            self.state.gameState = GameState.OVER
+                            running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
                     if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_real_move":

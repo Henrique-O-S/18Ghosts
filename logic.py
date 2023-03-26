@@ -4,7 +4,6 @@ import math
 from defines import *
 from position import Position
 
-
 def manhattan_distances(state):
     # returns the sum of manhattan distances from ghosts to their respective exits
     total = 0
@@ -92,6 +91,7 @@ def manhattan_distances(state):
                 total += 8
     return total
 
+'''
 def evaluate(state):
     cost = 1
     if state.gameState == GameState.PICKING:
@@ -112,6 +112,17 @@ def evaluate(state):
                 cost += 1
     value = 1000 - cost
     return value
+'''
+
+def evaluate(state):
+    if state.gameState == GameState.PICKING:
+        return 0
+    p1 = [i for i in range(len(state.ghosts)) if state.ghosts[i].player.name == "Player 1"]
+    p2 = [i for i in range(len(state.ghosts)) if state.ghosts[i].player.name == "Player 2"]
+    if state.currPlayer.name == "Player 1":
+        return len(p2) - len(p1)
+    else:
+        return len(p1) - len(p2)
 
 def execute_real_move(game, pos):
     if game.state.gameState == GameState.PLAYING:
@@ -139,10 +150,10 @@ def execute_random_move(game):
         game.state = game.state.place(index)
 
 def execute_minimax_move(game, evaluate_func, depth):
-    alpha = -100
-    beta = 100
+    alpha = float('-inf')
+    beta = float('inf')
     maximizing = True  # The top-level call to minimax is always a maximization step
-    best_value = -100
+    best_value = float('-inf')
     best_state = None
     if game.state.gameState == GameState.PLAYING:
         #print("Respawn moves:")
