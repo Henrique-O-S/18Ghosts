@@ -19,7 +19,11 @@ class State:
         self.currPlayer = self.player1
         self.currGhost : Ghost | int = 0
         self.gameState = GameState.PICKING
-        
+        self.n = 0
+        self.t = 0
+        self.parent = None
+        self.children = []
+
     def generate_board(self):
         board =  [
             [Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE), Tile(COLOR_RED_TILE, Portal("red")), Tile(COLOR_BLUE_TILE), Tile(COLOR_RED_TILE)],
@@ -69,32 +73,35 @@ class State:
         if victory_2:
             print('Player 2 Wins')
             return True
-        move = False
-        for id in self.playerGhostIDs():
-            if self.possibleMoves(self.ghosts[id]):
-                move = True
-        if (not move) and (not self.possibleRespawns()):
-            if self.currPlayer.name == 'Player 1':
-                victory_2 = True
-                print('Player 2 Wins')
-            else:
-                victory_1 = True
-                print('Player 1 Wins')
-            return True
-        self.switchPlayers()
-        move = False
-        for id in self.playerGhostIDs():
-            if self.possibleMoves(self.ghosts[id]):
-                move = True
-        if (not move) and (not self.possibleRespawns()):
-            if self.currPlayer.name == 'Player 2':
-                victory_1 = True
-                print('Player 1 Wins')
-            else:
-                victory_2 = True
-                print('Player 2 Wins')
-        self.switchPlayers()
-        return victory_1 or victory_2
+
+        if self.gameState == GameState.PLAYING:
+            move = False
+            for id in self.playerGhostIDs():
+                if self.possibleMoves(self.ghosts[id]):
+                    move = True
+            if (not move) and (not self.possibleRespawns()):
+                if self.currPlayer.name == 'Player 1':
+                    victory_2 = True
+                    print('Player 2 Wins')
+                else:
+                    victory_1 = True
+                    print('Player 1 Wins')
+                return True
+            self.switchPlayers()
+            move = False
+            for id in self.playerGhostIDs():
+                if self.possibleMoves(self.ghosts[id]):
+                    move = True
+            if (not move) and (not self.possibleRespawns()):
+                if self.currPlayer.name == 'Player 2':
+                    victory_1 = True
+                    print('Player 1 Wins')
+                else:
+                    victory_2 = True
+                    print('Player 2 Wins')
+            self.switchPlayers()
+            return victory_1 or victory_2
+        return False
 
     def possibleMoves(self, ghost : Ghost):
         row, col = ghost.index.y, ghost.index.x
@@ -328,3 +335,6 @@ class State:
                 self.ghosts.remove(self.ghosts[id])
                 return ghostPlayer
         return ""
+
+    def addChild(self, state):
+        state.parent = self

@@ -52,7 +52,7 @@ def main():
                     if player_player:
                         game = Game(execute_real_move, execute_real_move, screen, font)
                     elif player_bot:
-                        game = Game(execute_real_move, execute_minimax_move, screen, font)
+                        game = Game(execute_real_move, mcts, screen, font)
                     elif bot_bot:
                         game = Game(execute_minimax_move, execute_minimax_move, screen, font)
                     game.play()

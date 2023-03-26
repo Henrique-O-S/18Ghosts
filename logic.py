@@ -1,6 +1,10 @@
 import random
 import math
+from copy import deepcopy
 
+import numpy as np
+
+from state import State
 from defines import *
 from position import Position
 
@@ -251,3 +255,101 @@ def minimax(state, depth, alpha, beta, maximizing, evaluate_func):
             if alpha >= beta:
                 break
     return best_value
+
+
+def UCB1(state):
+    if state.n == 0:
+        return float('inf')
+    return state.t / state.n + 2 * math.sqrt(np.log(state.parent.n) / state.n)
+
+
+def treeTransversal(game, root):
+    selectedState = root
+    print("root children", len(root.children))
+    #selectedState = max(game.state.children, key=UCB1)
+    if game.state.gameState == GameState.PICKING:
+        print("entrou aqui")
+        while game.state.gameState == GameState.PICKING and selectedState.children != []:
+            print("ciclo")
+            selectedState = max(selectedState.children, key=UCB1)
+            print("selected children", len(selectedState.children))
+        return selectedState
+
+def simulation(game, evaluate_func):
+    print("chegou a simulation")
+    if game.state.gameState == GameState.PICKING:
+        while game.state.gameState == GameState.PICKING:
+            execute_random_move(game)
+        print(evaluate_func(game.state))
+        return evaluate_func(game.state)
+def rollout(state, root, value):
+    print("chegou ao rollout")
+    while True:
+        print("rollout cycle")
+
+        state.n += 1
+        state.t += value
+        if state.parent:
+            state = state.parent
+        else:
+            break
+    print("saiu rollout")
+
+def expandNode(game):
+    new_state = None
+    children = set()
+    if game.state.gameState == GameState.PLAYING:
+        for id in range(len(game.state.ghosts)):
+            if game.state.ghosts[id].player == game.state.currPlayer:
+                for move in game.state.possibleMoves(game.state.ghosts[id]):
+                    new_state = game.state.move(id, move)
+                    game.state.addChild(new_state)
+                    children.add(new_state)
+                for id in game.state.possibleRespawns():
+                    new_state = game.state.respawn(id)
+                    game.state.addChild(new_state)
+                    children.add(new_state)
+
+    elif game.state.gameState == GameState.PICKING:
+        for index in game.state.possiblePlacements():
+            new_state = game.state.place(index)
+            children.add(new_state)
+            game.state.addChild(new_state)
+    game.state.children = children
+
+
+def mcts(game, evaluate_func, nIterations):
+    root = game.state
+    expandNode(game)
+    for i in range(nIterations):
+        print("it", i)
+        print("invocou transversal")
+
+        game.state = treeTransversal(game, root) #altera o game state para o que foi escolhido
+        print("deu transversal")
+        if game.state.n == 0:
+            print("invocou rollout")
+            a = game.state
+            rollout(game.state, root, simulation(game, evaluate_func))
+            game.state = a
+            print("deu rollout")
+
+        else:
+            print("else")
+            print("invocou expand")
+
+            expandNode(game)
+            print("deu exapand")
+            print("invocou transversal")
+
+            game.state = treeTransversal(game, root)
+            print("deu transversal")
+            print("invocou rollout")
+            a = game.state
+            rollout(game.state, root, simulation(game, evaluate_func))
+            game.state = a
+            print("end else")
+
+
+    selectedState = max(root.children, key=UCB1)
+    game.state = selectedState #executed move with best eval
