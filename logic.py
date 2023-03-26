@@ -32,8 +32,6 @@ def manhattan_distances(state):
                     elif ghost.index == Position(4, 0):
                         total += 5
                     else:
-                        print(ghost.index.x)
-                        print(ghost.index.y)
                         total += abs(ghost.index.x - (RP_X - 1)) + abs(ghost.index.y - RP_Y)
             elif ghost.color == 'yellow' and state.currPlayer.colors_cleared.get('yellow') == 0:
                 if state.board[YP_Y][YP_X].portal.direction == 0:
@@ -75,8 +73,6 @@ def manhattan_distances(state):
                     elif ghost.index == Position(4, 4):
                         total += 6
                     else:
-                        print(ghost.index.x)
-                        print(ghost.index.y)
                         total += abs(ghost.index.x - (BP_X - 1)) + abs(ghost.index.y - BP_Y) + 1
                 else:
                     if ghost.index == Position(3, 4):
@@ -109,18 +105,18 @@ def evaluate(state):
     else:
         cost = manhattan_distances(state)
         print(cost)
-        for ghost in state.ghosts:
-            if ghost.player != state.currPlayer:
-                cost += 1
+        #for ghost in state.ghosts:
+            #if ghost.player != state.currPlayer:
+                #cost += 1
             #elif ghost.player == state.currPlayer:
                 #cost += 1
                 #if ghost.player.colors_cleared.get(ghost.color) == 0:
                     #for near_by_ghost in state.ghosts:
                         #if near_by_ghost.player != state.currPlayer and near_by_ghost.winsFight(ghost) and (ghost.index.x - 1 <= near_by_ghost.index.x <= ghost.index.x + 1 and ghost.index.y - 1 <= near_by_ghost.index.y <= ghost.index.y + 1) and (near_by_ghost.index.x != ghost.index.x and near_by_ghost.index.y != ghost.index.y):
                             #cost += 8
-        for ghost in state.dungeon.ghosts:
-            if ghost.player == state.currPlayer:
-                cost += 1
+        #for ghost in state.dungeon.ghosts:
+            #if ghost.player == state.currPlayer:
+                #cost += 1
     value = 1000 - cost
     return value
 
