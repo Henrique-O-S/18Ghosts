@@ -117,6 +117,7 @@ class State:
                     respawnGhostIDs.append(id)
         return respawnGhostIDs
 
+    '''
     def possiblePlacements(self):
         possible_placements = []
         for row in range(self.dimension):
@@ -127,6 +128,33 @@ class State:
                         if not ghost.placed:
                             if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
                                 possible_placements.append(Position(col, row))
+        return possible_placements
+    '''
+
+    def possiblePlacements(self):
+        possible_placements = []
+        redPlaced = False
+        yellowPlaced = False
+        bluePlaced = False
+        for row in range(self.dimension):
+            for col in range(self.dimension):
+                tile = self.board[row][col]
+                if not (tile.full or tile.portal):
+                    for ghost in self.ghosts:
+                        if (not ghost.placed) and (ghost.player == self.currPlayer):
+                            if (ghost.color == "red" and redPlaced) or (ghost.color == "yellow" and yellowPlaced) or (ghost.color == "blue" and bluePlaced):
+                                continue
+                            elif compareGhostTileColor(ghost, tile):
+                                possible_placements.append(Position(col, row))
+                                if ghost.color == "red":
+                                    redPlaced = True
+                                elif ghost.color == "yellow":
+                                    yellowPlaced = True
+                                elif ghost.color == "blue":
+                                    bluePlaced = True
+                    redPlaced = False
+                    yellowPlaced = False
+                    bluePlaced = False
         return possible_placements
     
     def playerGhostIDs(self):
