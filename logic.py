@@ -93,14 +93,12 @@ def manhattan_distances(state):
     return total
 
 def evaluate_easy(state):
-    print(state.currPlayer)
     cost = manhattan_distances(state)
 
     value = 1000 - cost
     return value
 
 def evaluate_medium(state):
-    print(state.currPlayer)
     cost = manhattan_distances(state)
 
     if state.currPlayer == state.player1:
@@ -122,7 +120,6 @@ def evaluate_medium(state):
     return value
 
 def evaluate_hard(state):
-    print(state.currPlayer)
     cost = manhattan_distances(state)
 
     for ghost in state.ghosts:
@@ -228,8 +225,8 @@ def execute_minimax_move(game, evaluate_hard_func, depth):
         for index in game.state.possiblePlacements():
             new_state = game.state.place(index)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_hard_func)
-            print("Minimax result:")
-            print(new_value)
+            #print("Minimax result:")
+            #print(new_value)
             #print("Direct heuristic result:")
             #print(evaluate(new_state))
             if new_value > best_value:

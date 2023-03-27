@@ -35,12 +35,30 @@ class Game:
                             if self.player1_logic.__name__ == "execute_random_move":
                                 self.player1_logic(self)
                             elif self.player1_logic.__name__ == "execute_minimax_move":
-                                self.player1_logic(self, evaluate_hard, PLAYER_1_DEPTH)
+                                if PLAYER_1_DIFFICULTY == 1:
+                                    self.player1_logic(self, evaluate_easy, PLAYER_1_DEPTH)
+                                elif PLAYER_1_DIFFICULTY == 2:
+                                    self.player1_logic(self, evaluate_medium, PLAYER_1_DEPTH)
+                                elif PLAYER_1_DIFFICULTY == 3:
+                                    self.player1_logic(self, evaluate_hard, PLAYER_1_DEPTH)
+                                else:
+                                    print("Choose a valid difficulty")
+                                    running = False
+                                    break
                         elif self.state.currPlayer.name == "Player 2":
                             if self.player2_logic.__name__ == "execute_random_move":
                                 self.player2_logic(self)
                             elif self.player2_logic.__name__ == "execute_minimax_move":
-                                self.player2_logic(self, evaluate_hard, PLAYER_2_DEPTH)
+                                if PLAYER_1_DIFFICULTY == 1:
+                                    self.player1_logic(self, evaluate_easy, PLAYER_2_DEPTH)
+                                elif PLAYER_1_DIFFICULTY == 2:
+                                    self.player1_logic(self, evaluate_medium, PLAYER_2_DEPTH)
+                                elif PLAYER_1_DIFFICULTY == 3:
+                                    self.player1_logic(self, evaluate_hard, PLAYER_2_DEPTH)
+                                else:
+                                    print("Choose a valid difficulty")
+                                    running = False
+                                    break
                         if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                             self.state.gameState = GameState.OVER
                             running = False
