@@ -58,7 +58,7 @@ COLOR_FONT_BACKGROUND = (255,255,255)
 PLAYER_1_DEPTH = 2
 PLAYER_2_DEPTH = 2
 
-MCTS_N_ITERATIONS = 10
+MCTS_N_ITERATIONS = 6
 
 def clickSquareColision(clickPosition, elPosition, width, height):
     return clickPosition.x > elPosition.x and clickPosition.x < elPosition.x + width and clickPosition.y > elPosition.y and clickPosition.y < elPosition.y + height

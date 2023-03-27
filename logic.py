@@ -265,9 +265,9 @@ def UCB1(state):
 
 def treeTransversal(game, root):
     selectedState = root
-    print("root children", len(root.children))
-    for a in root.children:
-        print(UCB1(a))
+    #print("root children", len(root.children))
+    #for a in root.children:
+    #    print(UCB1(a))
     #selectedState = max(game.state.children, key=UCB1)
     if game.state.gameState == GameState.PICKING:
         print("entrou aqui")
@@ -275,14 +275,29 @@ def treeTransversal(game, root):
             print("ciclo")
             selectedState = max(selectedState.children, key=UCB1)
             print("selected children", len(selectedState.children))
-            for a in selectedState.children:
-                print("sel", UCB1(a))
+            #for a in selectedState.children:
+                #print("sel", UCB1(a))
+        return selectedState
+    elif game.state.gameState == GameState.PLAYING:
+        print("entrou aqui esta playing")
+        while game.state.gameState == GameState.PLAYING and selectedState.children != []:
+            print("ciclo")
+            selectedState = max(selectedState.children, key=UCB1)
+            #print("selected children", len(selectedState.children))
+            #for a in selectedState.children:
+                #print("sel", UCB1(a))
         return selectedState
 
 def simulation(game, evaluate_func):
     print("chegou a simulation")
     if game.state.gameState == GameState.PICKING:
         while game.state.gameState == GameState.PICKING:
+            execute_random_move(game)
+        print(evaluate_func(game.state))
+        return evaluate_func(game.state)
+    elif game.state.gameState == GameState.PLAYING:
+        while game.state.gameState == GameState.PLAYING:
+            print("loop playing")
             execute_random_move(game)
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
@@ -334,7 +349,9 @@ def mcts(game, evaluate_func, nIterations):
         if game.state.n == 0:
             print("invocou rollout")
             a = game.state
-            rollout(game.state, root, simulation(game, evaluate_func))
+            print("1", game.state.gameState)
+            if game.state.gameState == root.gameState:
+                rollout(game.state, root, simulation(game, evaluate_func))
             game.state = a
             print("deu rollout")
 
@@ -351,12 +368,15 @@ def mcts(game, evaluate_func, nIterations):
             print("deu transversal")
             print("invocou rollout")
             a = game.state
-            rollout(game.state, root, simulation(game, evaluate_func))
+            print("2", game.state.gameState)
+            if game.state.gameState == root.gameState:
+                rollout(game.state, root, simulation(game, evaluate_func))
             game.state = a
+
             print("end else")
 
-    print("root", root.n, root.t)
-    for a in root.children:
-        print(UCB1(a), a.t, a.n)
+    #print("root", root.n, root.t)
+    #for a in root.children:
+     #   print(UCB1(a), a.t, a.n)
     selectedState = max(root.children, key=UCB1)
     game.state = selectedState #executed move with best eval
