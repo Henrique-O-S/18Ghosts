@@ -24,6 +24,28 @@ class Game:
         timer = pygame.time.Clock()
         running = True
         while running:
+<<<<<<< HEAD
+=======
+            if self.state.currPlayer.name == "Player 1":
+                if self.player1_logic.__name__ == "execute_random_move":
+                    self.player1_logic(self)
+                elif self.player1_logic.__name__ == "execute_minimax_move":
+                    self.player1_logic(self, evaluate, PLAYER_1_DEPTH)
+                elif self.player1_logic.__name__ == "mcts":
+                    print("oui")
+                    self.player1_logic(self, evaluate, MCTS_N_ITERATIONS)
+            elif self.state.currPlayer.name == "Player 2":
+                if self.player2_logic.__name__ == "execute_random_move":
+                    self.player2_logic(self)
+                elif self.player2_logic.__name__ == "execute_minimax_move":
+                    self.player2_logic(self, evaluate, PLAYER_2_DEPTH)
+                elif self.player2_logic.__name__ == "mcts":
+                    print("oui")
+                    self.player2_logic(self, evaluate, MCTS_N_ITERATIONS)
+            if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
+                self.state.gameState = GameState.OVER
+                running = False
+>>>>>>> mcts
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
