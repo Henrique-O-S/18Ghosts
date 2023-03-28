@@ -8,6 +8,8 @@ PLAYER_2_DEPTH = 2
 PLAYER_1_DIFFICULTY = 3  # 3 for hard, 2 for medium, 1 for easy
 PLAYER_2_DIFFICULTY = 3  # 3 for hard, 2 for medium, 1 for easy
 
+MCTS_N_ITERATIONS = 6
+
 # ----------------------------------------------------------------------------------------------
 
 class Color(Enum):
@@ -67,7 +69,6 @@ TILEHEIGHT = 90
 
 COLOR_FONT = (0, 0, 0)
 COLOR_FONT_BACKGROUND = (255, 255, 255)
-
 
 def clickSquareColision(clickPosition, elPosition, width, height):
     return clickPosition.x > elPosition.x and clickPosition.x < elPosition.x + width and clickPosition.y > elPosition.y and clickPosition.y < elPosition.y + height

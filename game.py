@@ -45,6 +45,8 @@ class Game:
                                     print("Choose a valid difficulty")
                                     running = False
                                     break
+                            elif self.player1_logic.__name__ == "mcts":
+                                self.player1_logic(self, evaluate_hard, MCTS_N_ITERATIONS)
                         elif self.state.currPlayer.name == "Player 2":
                             if self.player2_logic.__name__ == "execute_random_move":
                                 self.player2_logic(self)
@@ -59,6 +61,8 @@ class Game:
                                     print("Choose a valid difficulty")
                                     running = False
                                     break
+                            elif self.player2_logic.__name__ == "mcts":
+                                self.player2_logic(self, evaluate_hard, MCTS_N_ITERATIONS)
                         if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                             self.state.gameState = GameState.OVER
                             running = False
