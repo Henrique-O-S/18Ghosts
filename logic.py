@@ -221,7 +221,7 @@ def execute_minimax_move(game, evaluate_hard_func, depth):
                         break
     elif game.state.gameState == GameState.PICKING:
         #print("Picking moves:")
-        print(game.state.possiblePlacements())
+        #print(game.state.possiblePlacements())
         for index in game.state.possiblePlacements():
             new_state = game.state.place(index)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_hard_func)
