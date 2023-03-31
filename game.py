@@ -1,5 +1,6 @@
 import pygame
 from pygame import Surface, SurfaceType
+from pygame.time import get_ticks
 
 from defines import *
 from state import State
@@ -35,6 +36,7 @@ class Game:
                             if self.player1_logic.__name__ == "execute_random_move":
                                 self.player1_logic(self)
                             elif self.player1_logic.__name__ == "execute_minimax_move":
+                                start_time = get_ticks()
                                 if PLAYER_1_DIFFICULTY == 1:
                                     self.player1_logic(self, evaluate_easy, PLAYER_1_DEPTH)
                                 elif PLAYER_1_DIFFICULTY == 2:
@@ -45,22 +47,29 @@ class Game:
                                     print("Choose a valid difficulty")
                                     running = False
                                     break
+                                end_time = get_ticks()
+                                elapsed_time = end_time - start_time
+                                print("Player 1 Bot Play Time:", elapsed_time, "ms")
                             elif self.player1_logic.__name__ == "mcts":
                                 self.player1_logic(self, evaluate_hard, MCTS_N_ITERATIONS)
                         elif self.state.currPlayer.name == "Player 2":
                             if self.player2_logic.__name__ == "execute_random_move":
                                 self.player2_logic(self)
                             elif self.player2_logic.__name__ == "execute_minimax_move":
+                                start_time = get_ticks()
                                 if PLAYER_1_DIFFICULTY == 1:
-                                    self.player1_logic(self, evaluate_easy, PLAYER_2_DEPTH)
+                                    self.player2_logic(self, evaluate_easy, PLAYER_2_DEPTH)
                                 elif PLAYER_1_DIFFICULTY == 2:
-                                    self.player1_logic(self, evaluate_medium, PLAYER_2_DEPTH)
+                                    self.player2_logic(self, evaluate_medium, PLAYER_2_DEPTH)
                                 elif PLAYER_1_DIFFICULTY == 3:
-                                    self.player1_logic(self, evaluate_hard, PLAYER_2_DEPTH)
+                                    self.player2_logic(self, evaluate_hard, PLAYER_2_DEPTH)
                                 else:
                                     print("Choose a valid difficulty")
                                     running = False
                                     break
+                                end_time = get_ticks()
+                                elapsed_time = end_time - start_time
+                                print("Player 2 Bot Play Time:", elapsed_time, "ms")
                             elif self.player2_logic.__name__ == "mcts":
                                 self.player2_logic(self, evaluate_hard, MCTS_N_ITERATIONS)
                         if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
