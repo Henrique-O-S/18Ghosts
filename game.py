@@ -51,12 +51,12 @@ class Game:
                             if self.player2_logic.__name__ == "execute_random_move":
                                 self.player2_logic(self)
                             elif self.player2_logic.__name__ == "execute_minimax_move":
-                                if PLAYER_1_DIFFICULTY == 1:
-                                    self.player1_logic(self, evaluate_easy, PLAYER_2_DEPTH)
-                                elif PLAYER_1_DIFFICULTY == 2:
-                                    self.player1_logic(self, evaluate_medium, PLAYER_2_DEPTH)
-                                elif PLAYER_1_DIFFICULTY == 3:
-                                    self.player1_logic(self, evaluate_hard, PLAYER_2_DEPTH)
+                                if PLAYER_2_DIFFICULTY == 1:
+                                    self.player2_logic(self, evaluate_easy, PLAYER_2_DEPTH)
+                                elif PLAYER_2_DIFFICULTY == 2:
+                                    self.player2_logic(self, evaluate_medium, PLAYER_2_DEPTH)
+                                elif PLAYER_2_DIFFICULTY == 3:
+                                    self.player2_logic(self, evaluate_hard, PLAYER_2_DEPTH)
                                 else:
                                     print("Choose a valid difficulty")
                                     running = False
@@ -113,10 +113,15 @@ class Game:
             ghost.setPos(self.dungeonCoords)
             ghost.draw(self.screen)
 
+    def drawRules(self):
+        image = pygame.transform.scale(pygame.image.load('images/capture_rules.png').convert_alpha(), (100, 100))
+        self.screen.blit(image, (self.boardCoords.x + TILEWIDTH * 5 + 50, 50))
+
     def draw(self):
         self.drawPlayerTurn()
         self.drawBoard()
         self.drawDungeon()
+        self.drawRules()
         self.drawGhosts()
 
     def chooseGhostTile(self, click : Position):
