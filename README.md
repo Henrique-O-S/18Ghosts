@@ -1,5 +1,3 @@
----
-
 # IA Project 1 - 18 Ghosts
 
 ![img](docs/18ghosts.png)
