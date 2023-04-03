@@ -101,7 +101,9 @@ class Game:
         picking = ""
         if self.state.gameState == GameState.PICKING:
             picking = " to pick a spot"
-        self.state.currPlayer.draw(self.screen, self.font, picking)
+        stringToDisplay = self.state.currPlayer.name + '\'s turn' + picking
+        text_surface = self.font.render(stringToDisplay, False, COLOR_FONT, COLOR_FONT_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x, self.dungeonCoords.y - TILEHEIGHT))
 
     def drawBoard(self):
         for row in range(self.state.dimension):
@@ -132,13 +134,63 @@ class Game:
 
     def drawRules(self):
         image = pygame.transform.scale(pygame.image.load('images/capture_rules.png').convert_alpha(), (100, 100))
-        self.screen.blit(image, (self.boardCoords.x + TILEWIDTH * 5 + 50, 50))
+        self.screen.blit(image, (self.boardCoords.x + TILEWIDTH * 5 + 50, self.boardCoords.y))
+
+    def drawP1Scores(self):
+        s = 'P1 score:'
+        (textWidth, textHeight) = self.font.size(s)
+        text_surface = self.font.render(s, False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        # red ghosts outside
+        r = self.state.player1.colors_cleared['red']
+        text_surface = self.font.render(str(r), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 30, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        red = pygame.transform.scale(pygame.image.load('images/red_ghost_1.png').convert_alpha(), (50, 50))
+        self.screen.blit(red, (self.dungeonCoords.x + textWidth + 60, self.dungeonCoords.y + TILEHEIGHT * 3.3 - 10))
+        # yellow ghosts outside
+        y = self.state.player1.colors_cleared['yellow']
+        text_surface = self.font.render(str(y), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 140, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        yellow = pygame.transform.scale(pygame.image.load('images/yellow_ghost_1.png').convert_alpha(), (50, 50))
+        self.screen.blit(yellow, (self.dungeonCoords.x + textWidth + 170, self.dungeonCoords.y + TILEHEIGHT * 3.3 - 10))
+        # blue ghosts outside
+        b = self.state.player1.colors_cleared['blue']
+        text_surface = self.font.render(str(b), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 250, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        blue = pygame.transform.scale(pygame.image.load('images/blue_ghost_1.png').convert_alpha(), (50, 50))
+        self.screen.blit(blue, (self.dungeonCoords.x + textWidth + 280, self.dungeonCoords.y + TILEHEIGHT * 3.3 - 10))
+
+    def drawP2Scores(self):
+        s = 'P2 score:'
+        (textWidth, textHeight) = self.font.size(s)
+        text_surface = self.font.render(s, False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x, self.dungeonCoords.y + TILEHEIGHT * 4))
+        # red ghosts outside
+        r = self.state.player2.colors_cleared['red']
+        text_surface = self.font.render(str(r), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 30, self.dungeonCoords.y + TILEHEIGHT * 4))
+        red = pygame.transform.scale(pygame.image.load('images/red_ghost_2.png').convert_alpha(), (50, 50))
+        self.screen.blit(red, (self.dungeonCoords.x + textWidth + 60, self.dungeonCoords.y + TILEHEIGHT * 4 - 10))
+        # yellow ghosts outside
+        y = self.state.player2.colors_cleared['yellow']
+        text_surface = self.font.render(str(y), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 140, self.dungeonCoords.y + TILEHEIGHT * 4))
+        yellow = pygame.transform.scale(pygame.image.load('images/yellow_ghost_2.png').convert_alpha(), (50, 50))
+        self.screen.blit(yellow, (self.dungeonCoords.x + textWidth + 170, self.dungeonCoords.y + TILEHEIGHT * 4 - 10))
+        # blue ghosts outside
+        b = self.state.player2.colors_cleared['blue']
+        text_surface = self.font.render(str(b), False, COLOR_FONT, COLOR_BACKGROUND)
+        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 250, self.dungeonCoords.y + TILEHEIGHT * 4))
+        blue = pygame.transform.scale(pygame.image.load('images/blue_ghost_2.png').convert_alpha(), (50, 50))
+        self.screen.blit(blue, (self.dungeonCoords.x + textWidth + 280, self.dungeonCoords.y + TILEHEIGHT * 4 - 10))
 
     def draw(self):
         self.drawPlayerTurn()
         self.drawBoard()
         self.drawDungeon()
         self.drawRules()
+        self.drawP1Scores()
+        self.drawP2Scores()
         self.drawGhosts()
 
     def chooseGhostTile(self, click : Position):
