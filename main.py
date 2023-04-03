@@ -52,9 +52,26 @@ def main():
                     if player_player:
                         game = Game(execute_real_move, execute_real_move, screen, font)
                     elif player_bot:
-                        game = Game(execute_real_move, execute_minimax_move, screen, font)
+                        if PLAYER_2_BOT_TYPE == 0:
+                            game = Game(execute_real_move, execute_minimax_move, screen, font)
+                        elif PLAYER_2_BOT_TYPE == 1:
+                            game = Game(execute_real_move, mcts, screen, font)
+                        else:
+                            print("Choose a valid bot type")
+                            break
                     elif bot_bot:
-                        game = Game(execute_minimax_move, execute_minimax_move, screen, font)
+                        if PLAYER_1_BOT_TYPE == 0 and PLAYER_2_BOT_TYPE == 0:
+                            game = Game(execute_minimax_move, execute_minimax_move, screen, font)
+                        elif PLAYER_1_BOT_TYPE == 0 and PLAYER_2_BOT_TYPE == 1:
+                            game = Game(execute_minimax_move, mcts, screen, font)
+                        elif PLAYER_1_BOT_TYPE == 1 and PLAYER_2_BOT_TYPE == 0:
+                            game = Game(mcts, execute_minimax_move, screen, font)
+                        elif PLAYER_1_BOT_TYPE == 1 and PLAYER_2_BOT_TYPE == 1:
+                            game = Game(mcts, mcts, screen, font)
+                        else:
+                            print("Choose a valid bot type")
+                            main_menu = False
+                            break
                     game.play()
                 # Check if Options button is clicked
                 elif rect2.collidepoint(event.pos):
