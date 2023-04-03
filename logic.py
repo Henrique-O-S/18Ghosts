@@ -341,20 +341,28 @@ def simulation(game, evaluate_func):
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
     elif game.state.gameState == GameState.PLAYING:
-        player = game.state.currPlayer
+        #player = game.state.currPlayer
+        i = 0
         while game.state.gameState == GameState.PLAYING:
-            print("loop playing")
+            '''print("loop playing")
             curr_state = game.state
             execute_random_move(game)
             next_state = game.state
             if next_state.player1 == player:
+                print("is player 1")
                 if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player1.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player1.colors_cleared)):
                     print("yep")
                     break
             else:
+                print("is player 2")
                 if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player2.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player2.colors_cleared)):
                     print("yep")
-                    break
+                    break'''
+            execute_random_move(game)
+            print("iterou simulation")
+            i+=1
+            if i > 4:
+                break
 
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
@@ -375,18 +383,18 @@ def expandNode(game):
     new_state = None
     children = set()
     if game.state.gameState == GameState.PLAYING:
-        for id in range(len(game.state.ghosts)):
-            if game.state.ghosts[id].player == game.state.currPlayer:
-                for move in game.state.possibleMoves(game.state.ghosts[id]):
-                    print("dass1")
-                    new_state = game.state.move(id, move)
-                    game.state.addChild(new_state)
-                    children.add(new_state)
-                for id in game.state.possibleRespawns():
-                    print("dass2")
-                    new_state = game.state.respawn(id)
-                    game.state.addChild(new_state)
-                    children.add(new_state)
+        playerGhosts = game.state.playerGhostIDs()
+        for id in playerGhosts:
+            for move in game.state.possibleMoves(game.state.ghosts[id]):
+                print("dass1")
+                new_state = game.state.move(id, move)
+                game.state.addChild(new_state)
+                children.add(new_state)
+        for id in game.state.possibleRespawns():
+            print("dass2")
+            new_state = game.state.respawn(id)
+            game.state.addChild(new_state)
+            children.add(new_state)
 
     elif game.state.gameState == GameState.PICKING:
         for index in game.state.possiblePlacements():

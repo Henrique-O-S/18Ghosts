@@ -168,7 +168,9 @@ class State:
         return [i for i in range(len(self.ghosts)) if self.ghosts[i].player == self.currPlayer]
 
     def move(self, ghostID, index : Position):
+        print("start")
         state_copy = deepcopy(self)
+        print("finish")
         state_copy.currGhost = state_copy.ghosts[ghostID]
         state_copy.moveGhost(index)
         return state_copy
@@ -204,53 +206,50 @@ class State:
     
     def moveGhost(self, index : Position):
         if index in self.possibleMoves(self.currGhost): # move is possible
-            for i in range(len(self.ghosts)):
-                if self.ghosts[i] == self.currGhost:
-                    for j in range(len(self.ghosts)):
-                        if self.ghosts[j].index == index: # going to this (another) ghost's tile
-                            if self.ghosts[i].winsFight(self.ghosts[j]):
-                                freeSpaceIndex = self.ghosts[i].index
-                                self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
-                                self.dungeon.addGhost(self.ghosts[j])
-                                self.dungeon.ghosts[-1].dead = True
-                                self.ghosts[i].setIndex(index)
-                                self.currGhost = 0
-                                if self.ghosts[j].color == "red":
-                                    self.board[RP_Y][RP_X].portal.rotate()
-                                elif self.ghosts[j].color == "blue":
-                                    self.board[BP_Y][BP_X].portal.rotate()
-                                else:
-                                    self.board[YP_Y][YP_X].portal.rotate()
-                                self.ghosts.remove(self.ghosts[j])
-                                self.ghostEscape()
-                                self.switchPlayers()
-                                return
-                            else:
-                                freeSpaceIndex = self.ghosts[i].index
-                                self.dungeon.addGhost(self.ghosts[i])
-                                self.dungeon.ghosts[-1].dead = True
-                                self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
-                                if self.ghosts[i].color == "red":
-                                    self.board[RP_Y][RP_X].portal.rotate()
-                                elif self.ghosts[i].color == "blue":
-                                    self.board[BP_Y][BP_X].portal.rotate()
-                                else:
-                                    self.board[YP_Y][YP_X].portal.rotate()
-                                self.ghosts.remove(self.ghosts[i])
-                                self.currGhost = 0
-                                self.ghostEscape()
-                                self.switchPlayers()
-                                return
-            for i in range(len(self.ghosts)):
-                if self.ghosts[i] == self.currGhost:
-                    freeSpaceIndex = self.ghosts[i].index
-                    self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
-                    self.ghosts[i].setIndex(index)
-                    self.board[index.y][index.x].full = True
-                    self.currGhost = 0
-                    self.ghostEscape()
-                    self.switchPlayers()
-                    return
+            for j in range(len(self.ghosts)):
+                if self.ghosts[j].index == index: # going to this (another) ghost's tile
+                    if self.currGhost.winsFight(self.ghosts[j]):
+                        freeSpaceIndex = self.currGhost.index
+                        self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                        self.dungeon.addGhost(self.ghosts[j])
+                        self.dungeon.ghosts[-1].dead = True
+                        self.currGhost.setIndex(index)
+                        self.currGhost = 0
+                        if self.ghosts[j].color == "red":
+                            self.board[RP_Y][RP_X].portal.rotate()
+                        elif self.ghosts[j].color == "blue":
+                            self.board[BP_Y][BP_X].portal.rotate()
+                        else:
+                            self.board[YP_Y][YP_X].portal.rotate()
+                        self.ghosts.remove(self.ghosts[j])
+                        self.ghostEscape()
+                        self.switchPlayers()
+                        return
+                    else:
+                        freeSpaceIndex = self.currGhost.index
+                        self.dungeon.addGhost(self.currGhost)
+                        self.dungeon.ghosts[-1].dead = True
+                        self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                        if self.currGhost.color == "red":
+                            self.board[RP_Y][RP_X].portal.rotate()
+                        elif self.currGhost.color == "blue":
+                            self.board[BP_Y][BP_X].portal.rotate()
+                        else:
+                            self.board[YP_Y][YP_X].portal.rotate()
+                        self.ghosts.remove(self.currGhost)
+                        self.currGhost = 0
+                        self.ghostEscape()
+                        self.switchPlayers()
+                        return
+
+            freeSpaceIndex = self.currGhost.index
+            self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+            self.currGhost.setIndex(index)
+            self.board[index.y][index.x].full = True
+            self.currGhost = 0
+            self.ghostEscape()
+            self.switchPlayers()
+            return
                 
     def saveGhost(self):
         if self.currGhost.color == "red":
