@@ -341,9 +341,21 @@ def simulation(game, evaluate_func):
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
     elif game.state.gameState == GameState.PLAYING:
+        player = game.state.currPlayer
         while game.state.gameState == GameState.PLAYING:
             print("loop playing")
+            curr_state = game.state
             execute_random_move(game)
+            next_state = game.state
+            if next_state.player1 == player:
+                if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player1.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player1.colors_cleared)):
+                    print("yep")
+                    break
+            else:
+                if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player2.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player2.colors_cleared)):
+                    print("yep")
+                    break
+
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
 def rollout(state, root, value):

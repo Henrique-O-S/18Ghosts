@@ -3,7 +3,7 @@ from enum import Enum
 # --------------------------------------Game Definitions----------------------------------------
 
 PLAYER_1_BOT_TYPE = 0  # 0 for minimax, 1 for mcts
-PLAYER_2_BOT_TYPE = 0  # 0 for minimax, 1 for mcts
+PLAYER_2_BOT_TYPE = 1  # 0 for minimax, 1 for mcts
 
 PLAYER_1_DEPTH = 2
 PLAYER_2_DEPTH = 2
