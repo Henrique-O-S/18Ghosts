@@ -7,8 +7,9 @@ from state import State
 from position import Position
 from logic import *
 
+
 class Game:
-    def __init__(self, player1_logic, player2_logic, screen : Surface | SurfaceType, font):
+    def __init__(self, player1_logic, player2_logic, screen: Surface | SurfaceType, font):
         self.state = State()
         self.player1_logic = player1_logic
         self.player2_logic = player2_logic
@@ -16,7 +17,7 @@ class Game:
         self.font = font
         x = (self.screen.get_width() - self.state.dimension * TILEWIDTH) / 1.3
         y = (self.screen.get_height() - self.state.dimension * TILEHEIGHT) / 5
-        self.boardCoords = Position(x,y)
+        self.boardCoords = Position(x, y)
         x = (screen.get_width() - self.state.dimension * TILEWIDTH) / 1.3
         y = (screen.get_height() - self.state.dimension * TILEHEIGHT) / 5
         self.dungeonCoords = Position(x - 7 * TILEWIDTH, y + TILEHEIGHT)
@@ -28,7 +29,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.KEYDOWN: # CLOSE WITH ESC KEY
+                elif event.type == pygame.KEYDOWN:  # CLOSE WITH ESC KEY
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     elif event.key == pygame.K_RETURN:
@@ -86,9 +87,9 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
                     if self.state.currPlayer.name == "Player 1" and self.player1_logic.__name__ == "execute_real_move":
-                        self.player1_logic(self, Position(x,y))
+                        self.player1_logic(self, Position(x, y))
                     elif self.state.currPlayer.name == "Player 2" and self.player2_logic.__name__ == "execute_real_move":
-                        self.player2_logic(self, Position(x,y))
+                        self.player2_logic(self, Position(x, y))
                     if self.state.gameState == GameState.PLAYING and self.state.checkWinner():
                         self.state.gameState = GameState.OVER
                         running = False
@@ -108,7 +109,8 @@ class Game:
     def drawBoard(self):
         for row in range(self.state.dimension):
             for col in range(self.state.dimension):
-                self.state.board[row][col].setPos(Position(self.boardCoords.x + TILEWIDTH * col, self.boardCoords.y + TILEHEIGHT * row))
+                self.state.board[row][col].setPos(
+                    Position(self.boardCoords.x + TILEWIDTH * col, self.boardCoords.y + TILEHEIGHT * row))
                 if self.state.currGhost and self.state.currGhost.index.y == row and self.state.currGhost.index.x == col and self.state.currGhost in self.state.ghosts:
                     self.state.board[row][col].draw(self.screen, True)
                 else:
@@ -117,7 +119,8 @@ class Game:
     def drawDungeon(self):
         for i in range(3):
             for j in range(6):
-                self.state.dungeon.tiles[i][j].setPos(Position(self.dungeonCoords.x + j * TILEWIDTH, self.dungeonCoords.y + i * TILEHEIGHT))
+                self.state.dungeon.tiles[i][j].setPos(
+                    Position(self.dungeonCoords.x + j * TILEWIDTH, self.dungeonCoords.y + i * TILEHEIGHT))
         if self.state.currGhost and self.state.currGhost in self.state.dungeon.ghosts:
             self.state.dungeon.draw(self.screen, self.state.currGhost.index)
         else:
@@ -150,13 +153,15 @@ class Game:
         # yellow ghosts outside
         y = self.state.player1.colors_cleared['yellow']
         text_surface = self.font.render(str(y), False, COLOR_FONT, COLOR_BACKGROUND)
-        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 140, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        self.screen.blit(text_surface,
+                         (self.dungeonCoords.x + textWidth + 140, self.dungeonCoords.y + TILEHEIGHT * 3.3))
         yellow = pygame.transform.scale(pygame.image.load('images/yellow_ghost_1.png').convert_alpha(), (50, 50))
         self.screen.blit(yellow, (self.dungeonCoords.x + textWidth + 170, self.dungeonCoords.y + TILEHEIGHT * 3.3 - 10))
         # blue ghosts outside
         b = self.state.player1.colors_cleared['blue']
         text_surface = self.font.render(str(b), False, COLOR_FONT, COLOR_BACKGROUND)
-        self.screen.blit(text_surface, (self.dungeonCoords.x + textWidth + 250, self.dungeonCoords.y + TILEHEIGHT * 3.3))
+        self.screen.blit(text_surface,
+                         (self.dungeonCoords.x + textWidth + 250, self.dungeonCoords.y + TILEHEIGHT * 3.3))
         blue = pygame.transform.scale(pygame.image.load('images/blue_ghost_1.png').convert_alpha(), (50, 50))
         self.screen.blit(blue, (self.dungeonCoords.x + textWidth + 280, self.dungeonCoords.y + TILEHEIGHT * 3.3 - 10))
 
@@ -193,7 +198,7 @@ class Game:
         self.drawP2Scores()
         self.drawGhosts()
 
-    def chooseGhostTile(self, click : Position):
+    def chooseGhostTile(self, click: Position):
         if self.clickInsideBoard(click):
             indexes = self.coordsToIndexBoard(click)
             tile = self.state.board[indexes.y][indexes.x]
@@ -207,8 +212,8 @@ class Game:
                             self.state.switchPlayers()
                             self.state.updateState()
                             return
-                        
-    def coordsToIndexBoard(self, click : Position):
+
+    def coordsToIndexBoard(self, click: Position):
         if self.clickInsideBoard(click):
             indexY = int((click.y - self.boardCoords.y) // TILEHEIGHT)
             indexX = (int(click.x - self.boardCoords.x) // TILEWIDTH)
@@ -220,10 +225,10 @@ class Game:
             indexX = (int(click.x - self.dungeonCoords.x) // TILEWIDTH)
             return Position(indexX, indexY)
 
-    def clickInsideBoard(self, click : Position):
+    def clickInsideBoard(self, click: Position):
         return click.x >= self.boardCoords.x and click.x <= self.boardCoords.x + self.state.dimension * TILEWIDTH and click.y >= self.boardCoords.y and click.y <= self.boardCoords.y + self.state.dimension * TILEHEIGHT
 
-    def clickInsideDungeon(self, click : Position):
+    def clickInsideDungeon(self, click: Position):
         return click.x >= self.dungeonCoords.x and click.x <= self.dungeonCoords.x + 6 * TILEWIDTH and click.y >= self.dungeonCoords.y and click.y <= self.dungeonCoords.y + 3 * TILEHEIGHT
 
     def selectGhost(self, click: Position):

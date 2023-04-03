@@ -366,10 +366,12 @@ def expandNode(game):
         for id in range(len(game.state.ghosts)):
             if game.state.ghosts[id].player == game.state.currPlayer:
                 for move in game.state.possibleMoves(game.state.ghosts[id]):
+                    print("dass1")
                     new_state = game.state.move(id, move)
                     game.state.addChild(new_state)
                     children.add(new_state)
                 for id in game.state.possibleRespawns():
+                    print("dass2")
                     new_state = game.state.respawn(id)
                     game.state.addChild(new_state)
                     children.add(new_state)
@@ -395,6 +397,7 @@ def mcts(game, evaluate_func, nIterations):
             print("invocou rollout")
             a = game.state
             print("1", game.state.gameState)
+            print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
                 rollout(game.state, root, simulation(game, evaluate_func))
             game.state = a
@@ -414,6 +417,7 @@ def mcts(game, evaluate_func, nIterations):
             print("invocou rollout")
             a = game.state
             print("2", game.state.gameState)
+            print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
                 rollout(game.state, root, simulation(game, evaluate_func))
             game.state = a
