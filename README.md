@@ -66,6 +66,12 @@ Additional notes:
 
 ---
 
+## How to configure
+
+In the file defines.py you will find a section named "Game Definitions". There you will be able to choose the bot type between minimax and monte carlo, the depth to the minimax algorithm (either 2 or 4), the number of iterations to the mcts algorithm and the difficulty of the bots (either easy, medium or hard). This allows you to run your own experiments if you want to.
+
+---
+
 **Project done by:**
 - Diogo Silva (up202004288)
 - Henrique Silva (up202007242)
