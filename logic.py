@@ -193,30 +193,20 @@ def execute_minimax_move(game, evaluate_hard_func, depth):
     best_value = -10000
     best_state = None
     if game.state.gameState == GameState.PLAYING:
-        #print("Respawn moves:")
         for id in game.state.possibleRespawns():
             new_state = game.state.respawn(id)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_hard_func)
-            #print("Minimax result:")
-            #print(new_value)
-            #print("Direct heuristic result:")
-            #print(evaluate(new_state))
             if new_value > best_value:
                 best_value = new_value
                 best_state = new_state
             alpha = max(alpha, best_value)
             if beta <= alpha:
                 break
-        #print("Regular moves:")
         for id in range(len(game.state.ghosts)):
             if game.state.ghosts[id].player == game.state.currPlayer:
                 for move in game.state.possibleMoves(game.state.ghosts[id]):
                     new_state = game.state.move(id, move)
                     new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_hard_func)
-                    #print("Minimax result:")
-                    #print(new_value)
-                    #print("Direct heuristic result:")
-                    #print(evaluate(new_state))
                     if new_value > best_value:
                         best_value = new_value
                         best_state = new_state
@@ -224,15 +214,9 @@ def execute_minimax_move(game, evaluate_hard_func, depth):
                     if beta <= alpha:
                         break
     elif game.state.gameState == GameState.PICKING:
-        #print("Picking moves:")
-        #print(game.state.possiblePlacements())
         for index in game.state.possiblePlacements():
             new_state = game.state.place(index)
             new_value = minimax(new_state, depth - 1, alpha, beta, not maximizing, evaluate_hard_func)
-            #print("Minimax result:")
-            #print(new_value)
-            #print("Direct heuristic result:")
-            #print(evaluate(new_state))
             if new_value > best_value:
                 best_value = new_value
                 best_state = new_state
@@ -240,9 +224,6 @@ def execute_minimax_move(game, evaluate_hard_func, depth):
             if beta <= alpha:
                 break
     game.state = best_state
-    #print("Best state:")
-    #print(evaluate(best_state))
-
 def minimax(state, depth, alpha, beta, maximizing, evaluate_hard_func):
     # Base case: return the evaluation of the state if it's a leaf node or max depth is reached
     if depth == 0 or (state.gameState == GameState.OVER):
@@ -310,61 +291,36 @@ def UCB1(state):
 
 def treeTransversal(game, root):
     selectedState = root
-    #print("root children", len(root.children))
-    #for a in root.children:
-    #    print(UCB1(a))
-    #selectedState = max(game.state.children, key=UCB1)
     if game.state.gameState == GameState.PICKING:
-        print("entrou aqui")
         while game.state.gameState == GameState.PICKING and selectedState.children != []:
-            print("ciclo")
             selectedState = max(selectedState.children, key=UCB1)
-            print("selected children", len(selectedState.children))
-            #for a in selectedState.children:
-                #print("sel", UCB1(a))
         return selectedState
     elif game.state.gameState == GameState.PLAYING:
-        print("entrou aqui esta playing")
         while game.state.gameState == GameState.PLAYING and selectedState.children != []:
-            print("ciclo")
             selectedState = max(selectedState.children, key=UCB1)
-            #print("selected children", len(selectedState.children))
-            #for a in selectedState.children:
-                #print("sel", UCB1(a))
         return selectedState
 
 def simulation(game, evaluate_func):
-    print("chegou a simulation")
     if game.state.gameState == GameState.PICKING:
         while game.state.gameState == GameState.PICKING:
             execute_random_move(game)
-        print(evaluate_func(game.state))
         return evaluate_func(game.state)
     elif game.state.gameState == GameState.PLAYING:
         player = game.state.currPlayer
         while game.state.gameState == GameState.PLAYING:
-            print("loop playing")
             curr_state = game.state
             execute_random_move(game)
             next_state = game.state
             if next_state.player1 == player:
-                print("is player 1")
                 if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player1.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player1.colors_cleared)):
-                    print("yep")
                     break
             else:
-                print("is player 2")
                 if sum(map(lambda x : next_state.player2.colors_cleared[x] > 0, next_state.player2.colors_cleared)) > sum(map(lambda x : curr_state.player2.colors_cleared[x] > 0, curr_state.player2.colors_cleared)):
-                    print("yep")
                     break
-            print("iterou simulation")
 
-        print(evaluate_func(game.state))
         return evaluate_func(game.state)
 def rollout(state, value):
-    print("chegou ao rollout")
     while True:
-        print("rollout cycle")
 
         state.n += 1
         state.t += value
@@ -372,7 +328,6 @@ def rollout(state, value):
             state = state.parent
         else:
             break
-    print("saiu rollout")
 
 def expandNode(game):
     children = set()
@@ -380,12 +335,10 @@ def expandNode(game):
         playerGhosts = game.state.playerGhostIDs()
         for id in playerGhosts:
             for move in game.state.possibleMoves(game.state.ghosts[id]):
-                print("dass1")
                 new_state = game.state.move(id, move)
                 game.state.addChild(new_state)
                 children.add(new_state)
         for id in game.state.possibleRespawns():
-            print("dass2")
             new_state = game.state.respawn(id)
             game.state.addChild(new_state)
             children.add(new_state)
@@ -402,44 +355,21 @@ def mcts(game, evaluate_func, nIterations):
     root = game.state
     expandNode(game)
     for i in range(nIterations):
-        print("it", i)
-        print("invocou transversal")
-
-        game.state = treeTransversal(game, root) #altera o game state para o que foi escolhido
-        print("deu transversal")
+        game.state = treeTransversal(game, root)
         if game.state.n == 0:
-            print("invocou rollout")
             a = game.state
-            print("1", game.state.gameState)
-            print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
                 rollout(game.state, simulation(game, evaluate_func))
             game.state = a
-            print("deu rollout")
 
         else:
-            print("else")
-            print("invocou expand")
             a = game.state
             expandNode(game)
             game.state = a
-            print("deu exapand")
-            print("invocou transversal")
-
             game.state = treeTransversal(game, root)
-            print("deu transversal")
-            print("invocou rollout")
             a = game.state
-            print("2", game.state.gameState)
-            print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
                 rollout(game.state, simulation(game, evaluate_func))
             game.state = a
-
-            print("end else")
-
-    #print("root", root.n, root.t)
-    #for a in root.children:
-     #   print(UCB1(a), a.t, a.n)
     selectedState = max(root.children, key=UCB1)
-    game.state = selectedState #executed move with best eval
+    game.state = selectedState

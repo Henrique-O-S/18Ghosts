@@ -124,20 +124,6 @@ class State:
                     respawnGhostIDs.append(id)
         return respawnGhostIDs
 
-    '''
-    def possiblePlacements(self):
-        possible_placements = []
-        for row in range(self.dimension):
-            for col in range(self.dimension):
-                tile = self.board[row][col]
-                if not (tile.full or tile.portal):
-                    for ghost in self.ghosts:
-                        if not ghost.placed:
-                            if compareGhostTileColor(ghost, tile) and ghost.player == self.currPlayer:
-                                possible_placements.append(Position(col, row))
-        return possible_placements
-    '''
-
     def possiblePlacements(self):
         possible_placements = []
         redPlaced = False
@@ -168,9 +154,7 @@ class State:
         return [i for i in range(len(self.ghosts)) if self.ghosts[i].player == self.currPlayer]
 
     def move(self, ghostID, index : Position):
-        print("start")
         state_copy = deepcopy(self)
-        print("finish")
         state_copy.currGhost = state_copy.ghosts[ghostID]
         state_copy.certainMoveGhost(index)
         return state_copy
