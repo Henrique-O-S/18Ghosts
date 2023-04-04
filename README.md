@@ -73,7 +73,7 @@ In the file defines.py you will find a section named "Game Definitions". There y
 
 ---
 
-**Project done by:**
+**Project done by (Group 19):**
 - Diogo Silva (up202004288)
 - Henrique Silva (up202007242)
 - Tiago Branquinho (up202005567)
