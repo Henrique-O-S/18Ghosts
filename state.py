@@ -172,7 +172,7 @@ class State:
         state_copy = deepcopy(self)
         print("finish")
         state_copy.currGhost = state_copy.ghosts[ghostID]
-        state_copy.moveGhost(index)
+        state_copy.certainMoveGhost(index)
         return state_copy
     
     def respawn(self, ghostID):
@@ -184,16 +184,16 @@ class State:
     def place(self, index : Position):
         state_copy = deepcopy(self)
         tile = state_copy.board[index.y][index.x]
-        if index in state_copy.possiblePlacements():
-            for ghost in state_copy.ghosts:
-                if not ghost.placed:
-                    if compareGhostTileColor(ghost, tile) and ghost.player == state_copy.currPlayer:
-                        tile.full = True
-                        ghost.setIndex(Position(index.x, index.y))
-                        ghost.placed = True
-                        state_copy.switchPlayers()
-                        state_copy.updateState()
-                        break
+        #if index in state_copy.possiblePlacements():
+        for ghost in state_copy.ghosts:
+            if not ghost.placed:
+                if compareGhostTileColor(ghost, tile) and ghost.player == state_copy.currPlayer:
+                    tile.full = True
+                    ghost.setIndex(Position(index.x, index.y))
+                    ghost.placed = True
+                    state_copy.switchPlayers()
+                    state_copy.updateState()
+                    break
         return state_copy
     
     def checkTile(self, ghost: Ghost, new_row, new_col):
@@ -250,6 +250,53 @@ class State:
             self.ghostEscape()
             self.switchPlayers()
             return
+        
+    def certainMoveGhost(self, index : Position):
+        # if index in self.possibleMoves(self.currGhost): # move is possible
+        for j in range(len(self.ghosts)):
+            if self.ghosts[j].index == index: # going to this (another) ghost's tile
+                if self.currGhost.winsFight(self.ghosts[j]):
+                    freeSpaceIndex = self.currGhost.index
+                    self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                    self.dungeon.addGhost(self.ghosts[j])
+                    self.dungeon.ghosts[-1].dead = True
+                    self.currGhost.setIndex(index)
+                    self.currGhost = 0
+                    if self.ghosts[j].color == "red":
+                        self.board[RP_Y][RP_X].portal.rotate()
+                    elif self.ghosts[j].color == "blue":
+                        self.board[BP_Y][BP_X].portal.rotate()
+                    else:
+                        self.board[YP_Y][YP_X].portal.rotate()
+                    self.ghosts.remove(self.ghosts[j])
+                    self.ghostEscape()
+                    self.switchPlayers()
+                    return
+                else:
+                    freeSpaceIndex = self.currGhost.index
+                    self.dungeon.addGhost(self.currGhost)
+                    self.dungeon.ghosts[-1].dead = True
+                    self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+                    if self.currGhost.color == "red":
+                        self.board[RP_Y][RP_X].portal.rotate()
+                    elif self.currGhost.color == "blue":
+                        self.board[BP_Y][BP_X].portal.rotate()
+                    else:
+                        self.board[YP_Y][YP_X].portal.rotate()
+                    self.ghosts.remove(self.currGhost)
+                    self.currGhost = 0
+                    self.ghostEscape()
+                    self.switchPlayers()
+                    return
+
+        freeSpaceIndex = self.currGhost.index
+        self.board[freeSpaceIndex.y][freeSpaceIndex.x].full = False
+        self.currGhost.setIndex(index)
+        self.board[index.y][index.x].full = True
+        self.currGhost = 0
+        self.ghostEscape()
+        self.switchPlayers()
+        return
                 
     def saveGhost(self):
         if self.currGhost.color == "red":
