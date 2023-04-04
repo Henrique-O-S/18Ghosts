@@ -341,10 +341,9 @@ def simulation(game, evaluate_func):
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
     elif game.state.gameState == GameState.PLAYING:
-        #player = game.state.currPlayer
-        i = 0
+        player = game.state.currPlayer
         while game.state.gameState == GameState.PLAYING:
-            '''print("loop playing")
+            print("loop playing")
             curr_state = game.state
             execute_random_move(game)
             next_state = game.state
@@ -355,18 +354,14 @@ def simulation(game, evaluate_func):
                     break
             else:
                 print("is player 2")
-                if sum(map(lambda x : next_state.player1.colors_cleared[x] > 0, next_state.player2.colors_cleared)) > sum(map(lambda x : curr_state.player1.colors_cleared[x] > 0, curr_state.player2.colors_cleared)):
+                if sum(map(lambda x : next_state.player2.colors_cleared[x] > 0, next_state.player2.colors_cleared)) > sum(map(lambda x : curr_state.player2.colors_cleared[x] > 0, curr_state.player2.colors_cleared)):
                     print("yep")
-                    break'''
-            execute_random_move(game)
+                    break
             print("iterou simulation")
-            i+=1
-            if i > 4:
-                break
 
         print(evaluate_func(game.state))
         return evaluate_func(game.state)
-def rollout(state, root, value):
+def rollout(state, value):
     print("chegou ao rollout")
     while True:
         print("rollout cycle")
@@ -380,7 +375,6 @@ def rollout(state, root, value):
     print("saiu rollout")
 
 def expandNode(game):
-    new_state = None
     children = set()
     if game.state.gameState == GameState.PLAYING:
         playerGhosts = game.state.playerGhostIDs()
@@ -419,7 +413,7 @@ def mcts(game, evaluate_func, nIterations):
             print("1", game.state.gameState)
             print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
-                rollout(game.state, root, simulation(game, evaluate_func))
+                rollout(game.state, simulation(game, evaluate_func))
             game.state = a
             print("deu rollout")
 
@@ -439,7 +433,7 @@ def mcts(game, evaluate_func, nIterations):
             print("2", game.state.gameState)
             print("root gamestate", root.gameState)
             if game.state.gameState == root.gameState:
-                rollout(game.state, root, simulation(game, evaluate_func))
+                rollout(game.state, simulation(game, evaluate_func))
             game.state = a
 
             print("end else")
