@@ -61,6 +61,7 @@ All actions in the interface are performed using the left mouse button (clicks),
 Read the game instructions here: [[Game Rules](docs/18GHOSTS_EN_r1.pdf)]  
 
 Additional notes:
+- Mirror chambers are instead represented as neutral tiles with no special interaction; ghosts cannot be initially placed there but they can later move normally to those tiles
 - To respawn one of your ghosts, instead the ghost will be placed in the tile of the corresponding color furthest from the portal (of the same color) assuming the tyle is empty; otherwise, the action cannot take place
 - A player loses if there are no possible moves (including respawns) left at the moment or the opponent has one ghost of each color outside the castle
 
