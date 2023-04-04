@@ -52,7 +52,7 @@ python3 main.py
 python main.py
 ```
 This will execute the program and now you can play 18 Ghosts.  
-All actions in the interface are performed using the left mouse button (clicks), except for the ESC key which makes you leave the game. 
+All actions in the interface are performed using the left mouse button (clicks), except for the ENTER key that makes the artificial intelligence apply its move on each play and the ESC key which makes you leave the game. 
 
 ---
 
